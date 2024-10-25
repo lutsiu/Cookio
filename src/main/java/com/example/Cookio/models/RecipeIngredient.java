@@ -4,6 +4,8 @@ import com.example.Cookio.helpers.RecipeIngredientId;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -26,8 +28,9 @@ public class RecipeIngredient {
     private Ingredient ingredient;
 
     @Column(name = "quantity", precision = 10, scale = 2)
-    private double quantity;
+    private BigDecimal quantity;
 
     @Column(name = "unit", length = 50)
     private String unit;
+
 }

@@ -46,8 +46,8 @@ public class User {
     private String avatar;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "role", nullable = false)
-    private Role role = Role.USER;  // Default role as 'USER'
+    @Column(name = "role")
+    private Role role;
 
     @Column(name = "bio", columnDefinition = "TEXT")
     private String bio;
