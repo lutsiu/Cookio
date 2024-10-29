@@ -4,6 +4,7 @@ import com.example.Cookio.models.Recipe;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,7 +16,7 @@ public interface RecipeService {
     Optional<Recipe> getRecipeById(int id);
 
     // Update an existing recipe
-    Recipe updateRecipe(int id, Recipe updatedRecipe);
+    Optional<Recipe> updateRecipe(int id, Recipe updatedRecipe);
 
     // Delete a recipe by ID
     boolean deleteRecipe(int id);

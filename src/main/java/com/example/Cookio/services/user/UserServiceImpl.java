@@ -122,7 +122,7 @@ public class UserServiceImpl implements UserService {
         if (!isPasswordStrong(newPassword)) {
             throw new PasswordTooWeakException();
         }
-        user.setPassword(encoder.encode(newPassword));
+            user.setPassword(encoder.encode(newPassword));
         userDAO.save(user);
         return true;
     }

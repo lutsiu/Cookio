@@ -4,9 +4,11 @@ import com.example.Cookio.models.Recipe;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public interface RecipeDAO extends JpaRepository<Recipe, Integer> {
 
     // Find recipes by title (partial match, case-insensitive)
@@ -24,6 +26,9 @@ public interface RecipeDAO extends JpaRepository<Recipe, Integer> {
     // Find recipes by category (case-insensitive)
     @Query("SELECT r FROM Recipe r WHERE LOWER(r.category) = LOWER(:category)")
     List<Recipe> findByCategoryIgnoreCase(@Param("category") String category);
+
+    @Query("SELECT r FROM Recipe r WHERE r.author.id = :authorId")
+    List<Recipe> findByAuthorId(@Param("authorId") int authorId);
 
     // Find recipes by preparation time range
     List<Recipe> findByPrepTimeBetween(int minPrepTime, int maxPrepTime);
