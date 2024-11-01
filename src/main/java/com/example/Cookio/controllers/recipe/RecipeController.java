@@ -24,7 +24,7 @@ public class RecipeController {
     }
 
     // Endpoint to create a new recipe
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<Recipe> createRecipe(@RequestBody Recipe recipe) {
         Recipe savedRecipe = recipeService.createRecipe(recipe);
         return ResponseEntity.ok(savedRecipe);
