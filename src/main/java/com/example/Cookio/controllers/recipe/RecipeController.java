@@ -30,7 +30,7 @@ public class RecipeController {
         return ResponseEntity.ok(savedRecipe);
     }
 
-    // Endpoint to get all recipes with pagination
+    // Endpoint to get all recipes with pagination +
     @GetMapping
     public ResponseEntity<List<Recipe>> getAllRecipes(
             @RequestParam(defaultValue = "0") int page,
@@ -39,35 +39,35 @@ public class RecipeController {
         return ResponseEntity.ok(recipes);
     }
 
-    // Endpoint to get a recipe by ID
+    // Endpoint to get a recipe by ID +
     @GetMapping("/{id}")
     public ResponseEntity<Recipe> getRecipeById(@PathVariable int id) {
         Optional<Recipe> recipe = recipeService.getRecipeById(id);
         return recipe.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    // Endpoint to search recipes by title
+    // Endpoint to search recipes by title +
     @GetMapping("/search/title")
     public ResponseEntity<List<Recipe>> findRecipesByTitle(@RequestParam String title) {
         List<Recipe> recipes = recipeService.findRecipesByTitle(title);
         return ResponseEntity.ok(recipes);
     }
 
-    // Endpoint to search recipes by description
+    // Endpoint to search recipes by description -
     @GetMapping("/search/description")
     public ResponseEntity<List<Recipe>> findRecipesByDescription(@RequestParam String description) {
         List<Recipe> recipes = recipeService.findRecipesByDescription(description);
         return ResponseEntity.ok(recipes);
     }
 
-    // Endpoint to search recipes by ingredients
+    // Endpoint to search recipes by ingredients -
     @GetMapping("/search/ingredients")
     public ResponseEntity<List<Recipe>> findRecipesByIngredients(@RequestParam String ingredients) {
         List<Recipe> recipes = recipeService.findRecipesByIngredients(ingredients);
         return ResponseEntity.ok(recipes);
     }
 
-    // Endpoint to get recipes by author ID
+    // Endpoint to get recipes by author ID +
     @GetMapping("/author/{authorId}")
     public ResponseEntity<List<Recipe>> findRecipesByAuthor(@PathVariable int authorId) {
         List<Recipe> recipes = recipeService.findRecipesByAuthorId(authorId);
@@ -80,28 +80,28 @@ public class RecipeController {
         return ResponseEntity.ok(recipes);
     }
 
-    // Find recipes by type
+    // Find recipes by type +
     @GetMapping("/search/type/{typeId}")
     public ResponseEntity<List<Recipe>> findRecipesByType(@PathVariable int typeId) {
         List<Recipe> recipes = recipeService.findRecipesByType(typeId);
         return ResponseEntity.ok(recipes);
     }
 
-    // Find recipes by cuisine
+    // Find recipes by cuisine +
     @GetMapping("/search/cuisine/{cuisineId}")
     public ResponseEntity<List<Recipe>> findRecipesByCuisine(@PathVariable int cuisineId) {
         List<Recipe> recipes = recipeService.findRecipesByCuisine(cuisineId);
         return ResponseEntity.ok(recipes);
     }
 
-    // Endpoint to update an existing recipe by ID
+    // Endpoint to update an existing recipe by ID -
     @PutMapping("/{id}")
     public ResponseEntity<Recipe> updateRecipe(@PathVariable int id, @RequestBody Recipe recipe) {
         Optional<Recipe> updatedRecipe = recipeService.updateRecipe(id, recipe);
         return updatedRecipe.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    // Endpoint to delete a recipe by ID
+    // Endpoint to delete a recipe by ID +
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteRecipe(@PathVariable int id) {
         boolean deleted = recipeService.deleteRecipe(id);

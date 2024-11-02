@@ -1,12 +1,15 @@
 package com.example.Cookio.services.recipe;
 
 import com.example.Cookio.dao.recipe.RecipeDAO;
+import com.example.Cookio.exceptions.recipe.RecipeAlreadyExistsException;
+import com.example.Cookio.exceptions.recipe.RecipeNotFoundException;
 import com.example.Cookio.models.Recipe;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,12 +25,20 @@ public class RecipeServiceImpl implements RecipeService {
 
     @Override
     public Recipe createRecipe(Recipe recipe) {
+        boolean recipeIsAlreadyCreated = this.isDuplicateRecipe(recipe);
+        System.out.println(recipeIsAlreadyCreated);
+
+        if (recipeIsAlreadyCreated) {
+            throw new RecipeAlreadyExistsException("Recipe with this data already exists");
+        }
         return recipeDAO.save(recipe);
     }
 
     @Override
     public Optional<Recipe> getRecipeById(int id) {
-        return recipeDAO.findById(id);
+        return Optional.ofNullable(recipeDAO.findById(id).orElseThrow(
+                () -> new RecipeNotFoundException("Recipe not found with id: " + id)));
+
     }
 
     @Override
@@ -45,7 +56,7 @@ public class RecipeServiceImpl implements RecipeService {
             existingRecipe.setType(updatedRecipe.getType());
             existingRecipe.setCuisine(updatedRecipe.getCuisine());
             return recipeDAO.save(existingRecipe);
-        }).orElseThrow(() -> new RuntimeException("Recipe not found with id: " + id)));
+        }).orElseThrow(() -> new RecipeNotFoundException("Recipe not found with id: " + id)));
     }
 
     @Override
@@ -54,7 +65,7 @@ public class RecipeServiceImpl implements RecipeService {
             recipeDAO.deleteById(id);
             return true;
         }
-        return false;
+        throw new RecipeNotFoundException("Recipe not found with id: " + id);
     }
 
     @Override
@@ -79,7 +90,7 @@ public class RecipeServiceImpl implements RecipeService {
 
     @Override
     public List<Recipe> findRecipesByCategory(String category) {
-        return recipeDAO.findByCategoryIgnoreCase(category);
+        return recipeDAO.findByCategoryContainingIgnoreCase(category);
     }
 
     @Override
@@ -95,5 +106,15 @@ public class RecipeServiceImpl implements RecipeService {
     @Override
     public List<Recipe> getAllRecipes(int page, int size) {
         return recipeDAO.findAll(PageRequest.of(page, size)).getContent();
+    }
+
+    private boolean isDuplicateRecipe(Recipe recipe) {
+        List<Recipe> duplicates = recipeDAO.findDuplicateRecipe(recipe.getTitle(),
+                recipe.getInstructions(),
+                recipe.getPrepTime(),
+                recipe.getCookTime(),
+                recipe.getServings(),
+                recipe.getCategory());
+        return !duplicates.isEmpty();
     }
 }

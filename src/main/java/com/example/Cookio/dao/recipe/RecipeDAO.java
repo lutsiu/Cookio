@@ -7,9 +7,21 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface RecipeDAO extends JpaRepository<Recipe, Integer> {
+
+    // check if recipe is not duplicated
+    @Query("SELECT r FROM Recipe r WHERE r.title = :title AND " +
+                  "r.instructions = :instructions AND r.prepTime = :prepTime AND " +
+                  "r.cookTime = :cookTime AND r.servings = :servings AND r.category = :category")
+    List<Recipe> findDuplicateRecipe(@Param("title") String title,
+                                         @Param("instructions") String instructions,
+                                         @Param("prepTime") int prepTime,
+                                         @Param("cookTime") int cookTime,
+                                         @Param("servings") int servings,
+                                         @Param("category") String category);
 
     // Find recipes by title (partial match, case-insensitive)
     @Query("SELECT r FROM Recipe r WHERE LOWER(r.title) LIKE LOWER(CONCAT('%', :keyword, '%'))")
@@ -25,7 +37,7 @@ public interface RecipeDAO extends JpaRepository<Recipe, Integer> {
 
     // Find recipes by category (case-insensitive)
     @Query("SELECT r FROM Recipe r WHERE LOWER(r.category) = LOWER(:category)")
-    List<Recipe> findByCategoryIgnoreCase(@Param("category") String category);
+    List<Recipe> findByCategoryContainingIgnoreCase(@Param("category") String category);
 
     @Query("SELECT r FROM Recipe r WHERE r.author.id = :authorId")
     List<Recipe> findByAuthorId(@Param("authorId") int authorId);
