@@ -23,7 +23,7 @@ public class RecipeController {
         this.recipeService = recipeService;
     }
 
-    // Endpoint to create a new recipe
+    // Endpoint to create a new recipe +
     @PostMapping("/create")
     public ResponseEntity<Recipe> createRecipe(@RequestBody Recipe recipe) {
         Recipe savedRecipe = recipeService.createRecipe(recipe);
@@ -53,7 +53,7 @@ public class RecipeController {
         return ResponseEntity.ok(recipes);
     }
 
-    // Endpoint to search recipes by description -
+    // Endpoint to search recipes by description +
     @GetMapping("/search/description")
     public ResponseEntity<List<Recipe>> findRecipesByDescription(@RequestParam String description) {
         List<Recipe> recipes = recipeService.findRecipesByDescription(description);
@@ -74,6 +74,7 @@ public class RecipeController {
         return ResponseEntity.ok(recipes);
     }
 
+    // +
     @GetMapping("/search/category")
     public ResponseEntity<List<Recipe>> findRecipesByCategory(@RequestParam String category) {
         List<Recipe> recipes = recipeService.findRecipesByCategory(category);
@@ -94,7 +95,7 @@ public class RecipeController {
         return ResponseEntity.ok(recipes);
     }
 
-    // Endpoint to update an existing recipe by ID -
+    // Endpoint to update an existing recipe by ID +
     @PutMapping("/{id}")
     public ResponseEntity<Recipe> updateRecipe(@PathVariable int id, @RequestBody Recipe recipe) {
         Optional<Recipe> updatedRecipe = recipeService.updateRecipe(id, recipe);

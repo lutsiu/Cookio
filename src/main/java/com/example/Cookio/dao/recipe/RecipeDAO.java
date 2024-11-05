@@ -36,7 +36,7 @@ public interface RecipeDAO extends JpaRepository<Recipe, Integer> {
     List<Recipe> findByIngredientsContainingIgnoreCase(@Param("keyword") String keyword);
 
     // Find recipes by category (case-insensitive)
-    @Query("SELECT r FROM Recipe r WHERE LOWER(r.category) = LOWER(:category)")
+    @Query("SELECT r FROM Recipe r WHERE LOWER(r.category) LIKE LOWER(CONCAT('%', :category, '%'))")
     List<Recipe> findByCategoryContainingIgnoreCase(@Param("category") String category);
 
     @Query("SELECT r FROM Recipe r WHERE r.author.id = :authorId")

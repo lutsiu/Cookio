@@ -1,12 +1,22 @@
 package com.example.Cookio.services.recipe;
 
+import com.example.Cookio.dao.cuisine.CuisineDAO;
 import com.example.Cookio.dao.recipe.RecipeDAO;
+import com.example.Cookio.dao.type.TypeDAO;
+import com.example.Cookio.dao.user.UserDAO;
+import com.example.Cookio.exceptions.cuisine.CuisineNotFoundException;
 import com.example.Cookio.exceptions.recipe.RecipeAlreadyExistsException;
 import com.example.Cookio.exceptions.recipe.RecipeNotFoundException;
+import com.example.Cookio.exceptions.type.TypeNotFoundException;
+import com.example.Cookio.exceptions.user.UserNotFoundException;
+import com.example.Cookio.models.Cuisine;
 import com.example.Cookio.models.Recipe;
+import com.example.Cookio.models.Type;
+import com.example.Cookio.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import javax.swing.text.html.Option;
@@ -17,20 +27,29 @@ import java.util.Optional;
 public class RecipeServiceImpl implements RecipeService {
 
     private final RecipeDAO recipeDAO;
+    private final CuisineDAO cuisineDAO;
+    private final TypeDAO typeDAO;
+    private final UserDAO userDAO;
 
     @Autowired
-    public RecipeServiceImpl(RecipeDAO recipeDAO) {
+    public RecipeServiceImpl(RecipeDAO recipeDAO, CuisineDAO cuisineDAO,
+                             TypeDAO typeDAO, UserDAO userDAO) {
         this.recipeDAO = recipeDAO;
+        this.cuisineDAO = cuisineDAO;
+        this.typeDAO = typeDAO;
+        this.userDAO = userDAO;
     }
 
     @Override
     public Recipe createRecipe(Recipe recipe) {
         boolean recipeIsAlreadyCreated = this.isDuplicateRecipe(recipe);
-        System.out.println(recipeIsAlreadyCreated);
 
         if (recipeIsAlreadyCreated) {
             throw new RecipeAlreadyExistsException("Recipe with this data already exists");
         }
+
+        validateRecipe(recipe);
+
         return recipeDAO.save(recipe);
     }
 
@@ -44,6 +63,7 @@ public class RecipeServiceImpl implements RecipeService {
     @Override
     public Optional<Recipe> updateRecipe(int id, Recipe updatedRecipe) {
         return Optional.of(recipeDAO.findById(id).map(existingRecipe -> {
+            validateRecipe(updatedRecipe);
             existingRecipe.setTitle(updatedRecipe.getTitle());
             existingRecipe.setDescription(updatedRecipe.getDescription());
             existingRecipe.setIngredients(updatedRecipe.getIngredients());
@@ -116,5 +136,23 @@ public class RecipeServiceImpl implements RecipeService {
                 recipe.getServings(),
                 recipe.getCategory());
         return !duplicates.isEmpty();
+    }
+
+    private void validateRecipe(Recipe recipe) {
+        User author = recipe.getAuthor();
+        Cuisine cuisine = recipe.getCuisine();
+        Type type = recipe.getType();
+
+        if (!userDAO.existsById(author.getId())) {
+            throw new UserNotFoundException("Author with id " + author.getId() + " doesn't exist");
+        }
+
+        if (!cuisineDAO.existsById(cuisine.getId())) {
+            throw new CuisineNotFoundException("Cuisine with id " + cuisine.getId() + " doesn't exist");
+        }
+
+        if (!typeDAO.existsById(type.getId())) {
+            throw new TypeNotFoundException("Type with id " + type.getId() + " doesn't exist");
+        }
     }
 }

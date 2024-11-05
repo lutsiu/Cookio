@@ -41,9 +41,6 @@ public class Recipe {
     @JoinColumn(name = "author_id", referencedColumnName = "id", nullable = false)
     private User author;
 
-    @Column(name = "author_name", length = 255)
-    private String authorName;  // Optional, based on your use case
-
     @Column(name = "prep_time")
     private int prepTime;
 
