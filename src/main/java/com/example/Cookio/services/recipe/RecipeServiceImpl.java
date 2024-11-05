@@ -1,18 +1,17 @@
 package com.example.Cookio.services.recipe;
 
 import com.example.Cookio.dao.cuisine.CuisineDAO;
+import com.example.Cookio.dao.ingredient.IngredientDAO;
 import com.example.Cookio.dao.recipe.RecipeDAO;
 import com.example.Cookio.dao.type.TypeDAO;
 import com.example.Cookio.dao.user.UserDAO;
 import com.example.Cookio.exceptions.cuisine.CuisineNotFoundException;
+import com.example.Cookio.exceptions.ingredient.IngredientNotFoundException;
 import com.example.Cookio.exceptions.recipe.RecipeAlreadyExistsException;
 import com.example.Cookio.exceptions.recipe.RecipeNotFoundException;
 import com.example.Cookio.exceptions.type.TypeNotFoundException;
 import com.example.Cookio.exceptions.user.UserNotFoundException;
-import com.example.Cookio.models.Cuisine;
-import com.example.Cookio.models.Recipe;
-import com.example.Cookio.models.Type;
-import com.example.Cookio.models.User;
+import com.example.Cookio.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,6 +21,7 @@ import org.springframework.stereotype.Service;
 import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class RecipeServiceImpl implements RecipeService {
@@ -31,13 +31,16 @@ public class RecipeServiceImpl implements RecipeService {
     private final TypeDAO typeDAO;
     private final UserDAO userDAO;
 
+    private final IngredientDAO ingredientDAO;
+
     @Autowired
     public RecipeServiceImpl(RecipeDAO recipeDAO, CuisineDAO cuisineDAO,
-                             TypeDAO typeDAO, UserDAO userDAO) {
+                             TypeDAO typeDAO, UserDAO userDAO, IngredientDAO ingredientDAO) {
         this.recipeDAO = recipeDAO;
         this.cuisineDAO = cuisineDAO;
         this.typeDAO = typeDAO;
         this.userDAO = userDAO;
+        this.ingredientDAO = ingredientDAO;
     }
 
     @Override
@@ -142,6 +145,14 @@ public class RecipeServiceImpl implements RecipeService {
         User author = recipe.getAuthor();
         Cuisine cuisine = recipe.getCuisine();
         Type type = recipe.getType();
+        Set<Ingredient> ingredients = recipe.getIngredients();
+
+        ingredients.forEach(ingredient -> {
+            if (!ingredientDAO.existsById(ingredient.getId())) {
+                throw new IngredientNotFoundException("Ingredient with id " + ingredient.getId() +
+                        " doesn't exist");
+            }
+        });
 
         if (!userDAO.existsById(author.getId())) {
             throw new UserNotFoundException("Author with id " + author.getId() + " doesn't exist");

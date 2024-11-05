@@ -1,11 +1,15 @@
 package com.example.Cookio.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -24,8 +28,8 @@ public class Recipe {
     @Column(name = "title", nullable = false, length = 255)
     private String title;
 
-    @Column(name = "ingredients", columnDefinition = "json")
-    private String ingredients;  // Handles JSON fields as String in JPA
+    /*@Column(name = "ingredients", columnDefinition = "TEXT")
+    private String ingredients;*/
 
     @Column(name = "instructions", nullable = false, columnDefinition = "TEXT")
     private String instructions;
@@ -75,5 +79,11 @@ public class Recipe {
     @ManyToMany(mappedBy = "savedRecipes")
     private Set<User> users;  // This set represents users who have interacted with the recipe
 
-
+    @ManyToMany
+    @JoinTable(
+            name = "recipe_ingredient",
+            joinColumns = @JoinColumn(name = "recipe_id"),
+            inverseJoinColumns = @JoinColumn(name = "ingredient_id")
+    )
+    private Set<Ingredient> ingredients = new HashSet<>();
 }
