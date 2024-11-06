@@ -1,45 +1,36 @@
 package com.example.Cookio.services.user;
 
+import com.example.Cookio.dao.recipe.RecipeDAO;
 import com.example.Cookio.dao.user.UserDAO;
+import com.example.Cookio.dto.RecipeDTO;
 import com.example.Cookio.dto.UserDTO;
+import com.example.Cookio.exceptions.recipe.RecipeNotFoundException;
 import com.example.Cookio.exceptions.user.PasswordTooWeakException;
 import com.example.Cookio.exceptions.user.UserAlreadyExistsException;
 import com.example.Cookio.exceptions.user.UserNotFoundException;
+import com.example.Cookio.models.Recipe;
 import com.example.Cookio.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.swing.text.html.Option;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
 
     private final UserDAO userDAO;
+    private final RecipeDAO recipeDAO;
 
     private final PasswordEncoder encoder;
 
     @Autowired
-    public UserServiceImpl(UserDAO userDAO, PasswordEncoder encoder) {
+    public UserServiceImpl(UserDAO userDAO, RecipeDAO recipeDAO, PasswordEncoder encoder) {
         this.userDAO = userDAO;
+        this.recipeDAO = recipeDAO;
         this.encoder = encoder;
-    }
-
-    // convert to dto model in order to hide sensitive data
-    private UserDTO convertToDTO(User user) {
-        return new UserDTO(
-                user.getId(),
-                user.getFirstName(),
-                user.getLastName(),
-                user.getEmail(),
-                user.getAvatar(),
-                user.getBio(),
-                user.getCreatedAt(),
-                user.getUpdatedAt()
-        );
     }
 
     @Override
@@ -55,7 +46,7 @@ public class UserServiceImpl implements UserService {
 
         user.setPassword(encoder.encode(user.getPassword()));
         User savedUser = userDAO.save(user);
-        return convertToDTO(savedUser);
+        return UserDTO.fromUser(savedUser);
     }
 
     public Optional<UserDTO> updateUser(int userId, User updatedUser) {
@@ -80,7 +71,7 @@ public class UserServiceImpl implements UserService {
                     existingUser.setBio(updatedUser.getBio());
 
                     User savedUser = userDAO.save(existingUser);
-                    return convertToDTO(savedUser);
+                    return UserDTO.fromUser(savedUser);
                 })
                 .or(() -> {
                     throw new UserNotFoundException("User not found with id: " + userId);
@@ -90,7 +81,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<UserDTO> getUserById(int id) {
         return userDAO.findById(id)
-                .map(this::convertToDTO)
+                .map(UserDTO::fromUser)
                 .or(() -> {
                     throw new UserNotFoundException("User not found with id: " + id);
                 });
@@ -99,7 +90,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<UserDTO> getUserByEmail(String email) {
         return userDAO.findByEmail(email)
-                .map(this::convertToDTO)
+                .map(UserDTO::fromUser)
                 .or(() -> {
                     throw new UserNotFoundException("User not found with email: " + email);
                 });
@@ -109,7 +100,7 @@ public class UserServiceImpl implements UserService {
     public List<UserDTO> findByFirstNameAndLastName(String firstName, String lastName) {
         return userDAO.findByFirstNameAndLastName(firstName, lastName)
                 .stream()
-                .map(this::convertToDTO)
+                .map(UserDTO::fromUser)
                 .collect(Collectors.toList());
     }
 
@@ -153,6 +144,23 @@ public class UserServiceImpl implements UserService {
         return hasUppercase && hasLowercase && hasDigit && hasSpecialChar;
     }
 
+    public void addRecipeToUser(int userId, int recipeId) {
+        User user = userDAO.findById(userId).orElseThrow(() ->
+                new UserNotFoundException("User with id " + userId + " is not found"));
+        Recipe recipe = recipeDAO.findById(recipeId).orElseThrow(() ->
+            new RecipeNotFoundException("Recipe with id " + recipeId + " is not found"));
+        user.addRecipe(recipe);
+        userDAO.save(user);
+    }
+
+    public void removeRecipeFromUser(int userId, int recipeId) {
+        User user = userDAO.findById(userId).orElseThrow(() ->
+                new UserNotFoundException("User with id " + userId + " is not found"));
+        Recipe recipe = recipeDAO.findById(recipeId).orElseThrow(() ->
+                new RecipeNotFoundException("Recipe with id " + recipeId + " is not found"));
+        user.removeRecipe(recipe);
+        userDAO.save(user);
+    }
 
 }
 

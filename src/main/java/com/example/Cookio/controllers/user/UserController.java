@@ -69,6 +69,19 @@ public class UserController {
         }
     }
 
+    @PatchMapping("/{userId}/recipe/{recipeId}/add")
+    private ResponseEntity<Void> addRecipeToUser(@PathVariable int userId, @PathVariable int recipeId) {
+        userService.addRecipeToUser(userId, recipeId);
+        return ResponseEntity.noContent().build();
+    }
+
+
+    @PatchMapping("/{userId}/recipe/{recipeId}/remove")
+    private ResponseEntity<Void> removeRecipeFromUser(@PathVariable int userId, @PathVariable int recipeId) {
+        userService.removeRecipeFromUser(userId, recipeId);
+        return ResponseEntity.noContent().build();
+    }
+
     @DeleteMapping("/{id}")
     private ResponseEntity<String> deleteUser(@PathVariable int id) {
         boolean success = userService.deleteUser(id);

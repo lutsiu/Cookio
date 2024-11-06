@@ -1,5 +1,9 @@
 package com.example.Cookio.models;
 import com.example.Cookio.helpers.Role;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -19,6 +23,7 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name = "users")
+
 public class User {
 
     @Id
@@ -61,10 +66,20 @@ public class User {
     private LocalDateTime updatedAt;
 
     @ManyToMany
+
     @JoinTable(
             name = "user_recipe",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "recipe_id")
     )
     private Set<Recipe> savedRecipes;
+
+    public void addRecipe(Recipe recipe) {
+        this.savedRecipes.add(recipe);
+        recipe.getUsers().add(this);
+    }
+    public void removeRecipe(Recipe recipe) {
+        this.savedRecipes.remove(recipe);
+        recipe.getUsers().remove(this);
+    }
 }

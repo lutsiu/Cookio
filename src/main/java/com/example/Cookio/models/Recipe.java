@@ -1,7 +1,6 @@
 package com.example.Cookio.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -19,6 +18,7 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name = "recipes")
+
 public class Recipe {
 
     @Id

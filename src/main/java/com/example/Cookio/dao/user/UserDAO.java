@@ -17,4 +17,5 @@ public interface UserDAO extends JpaRepository<User, Integer> {
     @Query("SELECT u FROM User u WHERE u.firstName = ?1 AND u.lastName = ?2")
     List<User> findByFirstNameAndLastName(String firstName, String lastName);
 
+
 }
