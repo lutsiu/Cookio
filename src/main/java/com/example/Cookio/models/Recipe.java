@@ -42,6 +42,7 @@ public class Recipe {
 
     // Many-to-One with User
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "author_id", referencedColumnName = "id", nullable = false)
     private User author;
 
@@ -76,6 +77,7 @@ public class Recipe {
     private Cuisine cuisine;
 
     // Many-to-Many relationship with User via user_recipe table
+    @JsonIgnore
     @ManyToMany(mappedBy = "savedRecipes")
     private Set<User> users;  // This set represents users who have interacted with the recipe
 

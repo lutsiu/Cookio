@@ -2,7 +2,6 @@ package com.example.Cookio.services.user;
 
 import com.example.Cookio.dao.recipe.RecipeDAO;
 import com.example.Cookio.dao.user.UserDAO;
-import com.example.Cookio.dto.RecipeDTO;
 import com.example.Cookio.dto.UserDTO;
 import com.example.Cookio.exceptions.recipe.RecipeNotFoundException;
 import com.example.Cookio.exceptions.user.PasswordTooWeakException;
@@ -14,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
 import java.util.*;
 import java.util.stream.Collectors;
 

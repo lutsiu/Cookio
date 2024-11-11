@@ -1,5 +1,6 @@
 package com.example.Cookio.dto;
 
+import com.example.Cookio.dto.recipe.RecipeDTONoUser;
 import com.example.Cookio.models.Ingredient;
 import com.example.Cookio.models.Recipe;
 import com.example.Cookio.models.User;
@@ -29,12 +30,12 @@ public class UserDTO {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    private Set<RecipeDTO> recipes;
+    private Set<RecipeDTONoUser> recipes;
 
     public static UserDTO fromUser(User user) {
         // Convert the user entity to the UserDTO
-        Set<RecipeDTO> recipeDTOs = user.getSavedRecipes().stream()
-                .map(RecipeDTO::fromRecipe)  // Convert each Recipe to RecipeDTO
+        Set<RecipeDTONoUser> recipeDTOs = user.getSavedRecipes().stream()
+                .map(RecipeDTONoUser::fromRecipe)  // Convert each Recipe to RecipeDTO
                 .collect(Collectors.toSet()); // Collect the converted RecipeDTOs
 
         return new UserDTO(

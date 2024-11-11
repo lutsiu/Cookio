@@ -5,6 +5,7 @@ import com.example.Cookio.dao.ingredient.IngredientDAO;
 import com.example.Cookio.dao.recipe.RecipeDAO;
 import com.example.Cookio.dao.type.TypeDAO;
 import com.example.Cookio.dao.user.UserDAO;
+import com.example.Cookio.dto.recipe.RecipeDTOWithUsers;
 import com.example.Cookio.exceptions.cuisine.CuisineNotFoundException;
 import com.example.Cookio.exceptions.ingredient.IngredientNotFoundException;
 import com.example.Cookio.exceptions.recipe.RecipeAlreadyExistsException;
@@ -22,6 +23,7 @@ import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class RecipeServiceImpl implements RecipeService {
@@ -44,7 +46,7 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public Recipe createRecipe(Recipe recipe) {
+    public RecipeDTOWithUsers createRecipe(Recipe recipe) {
         boolean recipeIsAlreadyCreated = this.isDuplicateRecipe(recipe);
 
         if (recipeIsAlreadyCreated) {
@@ -53,19 +55,22 @@ public class RecipeServiceImpl implements RecipeService {
 
         validateRecipe(recipe);
 
-        return recipeDAO.save(recipe);
+        return RecipeDTOWithUsers.fromRecipe(recipeDAO.save(recipe));
     }
 
     @Override
-    public Optional<Recipe> getRecipeById(int id) {
-        return Optional.ofNullable(recipeDAO.findById(id).orElseThrow(
-                () -> new RecipeNotFoundException("Recipe not found with id: " + id)));
-
+    public Optional<RecipeDTOWithUsers> getRecipeById(int id) {
+        return recipeDAO.findById(id)
+                .map(RecipeDTOWithUsers::fromRecipe)
+                .or(() -> {
+                    throw new RecipeNotFoundException("Recipe not found with id: " + id);
+                });
     }
 
+
     @Override
-    public Optional<Recipe> updateRecipe(int id, Recipe updatedRecipe) {
-        return Optional.of(recipeDAO.findById(id).map(existingRecipe -> {
+    public Optional<RecipeDTOWithUsers> updateRecipe(int id, Recipe updatedRecipe) {
+        return Optional.ofNullable(recipeDAO.findById(id).map(existingRecipe -> {
             validateRecipe(updatedRecipe);
             existingRecipe.setTitle(updatedRecipe.getTitle());
             existingRecipe.setDescription(updatedRecipe.getDescription());
@@ -78,7 +83,9 @@ public class RecipeServiceImpl implements RecipeService {
             existingRecipe.setCategory(updatedRecipe.getCategory());
             existingRecipe.setType(updatedRecipe.getType());
             existingRecipe.setCuisine(updatedRecipe.getCuisine());
-            return recipeDAO.save(existingRecipe);
+
+            Recipe savedRecipe = recipeDAO.save(existingRecipe);
+            return RecipeDTOWithUsers.fromRecipe(savedRecipe);
         }).orElseThrow(() -> new RecipeNotFoundException("Recipe not found with id: " + id)));
     }
 
@@ -92,43 +99,52 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public List<Recipe> findRecipesByTitle(String titleKeyword) {
-        return recipeDAO.findByTitleContainingIgnoreCase(titleKeyword);
+    public List<RecipeDTOWithUsers> findRecipesByTitle(String titleKeyword) {
+        return recipeDAO.findByTitleContainingIgnoreCase(titleKeyword)
+                .stream().map(RecipeDTOWithUsers::fromRecipe).collect(Collectors.toList());
     }
 
     @Override
-    public List<Recipe> findRecipesByDescription(String descriptionKeyword) {
-        return recipeDAO.findByDescriptionContainingIgnoreCase(descriptionKeyword);
+    public List<RecipeDTOWithUsers> findRecipesByDescription(String descriptionKeyword) {
+        return recipeDAO.findByDescriptionContainingIgnoreCase(descriptionKeyword)
+                .stream().map(RecipeDTOWithUsers::fromRecipe).collect(Collectors.toList());
     }
 
     @Override
-    public List<Recipe> findRecipesByIngredients(String ingredientsKeyword) {
-        return recipeDAO.findByIngredientsContainingIgnoreCase(ingredientsKeyword);
+    public List<RecipeDTOWithUsers> findRecipesByIngredients(String ingredientsKeyword) {
+        return recipeDAO.findByIngredientsContainingIgnoreCase(ingredientsKeyword)
+                .stream().map(RecipeDTOWithUsers::fromRecipe).collect(Collectors.toList());
     }
 
     @Override
-    public List<Recipe> findRecipesByAuthorId(int authorId) {
-        return recipeDAO.findByAuthorId(authorId);
+    public List<RecipeDTOWithUsers> findRecipesByAuthorId(int authorId) {
+        return recipeDAO.findByAuthorId(authorId)
+                .stream().map(RecipeDTOWithUsers::fromRecipe).collect(Collectors.toList());
     }
 
     @Override
-    public List<Recipe> findRecipesByCategory(String category) {
-        return recipeDAO.findByCategoryContainingIgnoreCase(category);
+    public List<RecipeDTOWithUsers> findRecipesByCategory(String category) {
+        return recipeDAO.findByCategoryContainingIgnoreCase(category)
+                .stream().map(RecipeDTOWithUsers::fromRecipe).collect(Collectors.toList());
     }
 
     @Override
-    public List<Recipe> findRecipesByType(int typeId) {
-        return recipeDAO.findByTypeId(typeId);
+    public List<RecipeDTOWithUsers> findRecipesByType(int typeId) {
+
+        return recipeDAO.findByTypeId(typeId)
+                .stream().map(RecipeDTOWithUsers::fromRecipe).collect(Collectors.toList());
     }
 
     @Override
-    public List<Recipe> findRecipesByCuisine(int cuisineId) {
-        return recipeDAO.findByCuisineId(cuisineId);
+    public List<RecipeDTOWithUsers> findRecipesByCuisine(int cuisineId) {
+        return recipeDAO.findByCuisineId(cuisineId)
+                .stream().map(RecipeDTOWithUsers::fromRecipe).collect(Collectors.toList());
     }
 
     @Override
-    public List<Recipe> getAllRecipes(int page, int size) {
-        return recipeDAO.findAll(PageRequest.of(page, size)).getContent();
+    public List<RecipeDTOWithUsers> getAllRecipes(int page, int size) {
+        return recipeDAO.findAll(PageRequest.of(page, size)).getContent()
+                .stream().map(RecipeDTOWithUsers::fromRecipe).collect(Collectors.toList());
     }
 
     private boolean isDuplicateRecipe(Recipe recipe) {

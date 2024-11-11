@@ -1,5 +1,6 @@
 package com.example.Cookio.services.recipe;
 
+import com.example.Cookio.dto.recipe.RecipeDTOWithUsers;
 import com.example.Cookio.models.Recipe;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -10,34 +11,34 @@ import java.util.Optional;
 
 public interface RecipeService {
     // Create a new recipe
-    Recipe createRecipe(Recipe recipe);
+    RecipeDTOWithUsers createRecipe(Recipe recipe);
 
     // Retrieve a recipe by ID
-    Optional<Recipe> getRecipeById(int id);
+    Optional<RecipeDTOWithUsers> getRecipeById(int id);
 
     // Update an existing recipe
-    Optional<Recipe> updateRecipe(int id, Recipe updatedRecipe);
+    Optional<RecipeDTOWithUsers> updateRecipe(int id, Recipe updatedRecipe);
 
     // Delete a recipe by ID
     boolean deleteRecipe(int id);
 
     // Find recipes by title with partial match
-    List<Recipe> findRecipesByTitle(String titleKeyword);
+    List<RecipeDTOWithUsers> findRecipesByTitle(String titleKeyword);
 
     // Find recipes by description with partial match
-    List<Recipe> findRecipesByDescription(String descriptionKeyword);
+    List<RecipeDTOWithUsers> findRecipesByDescription(String descriptionKeyword);
 
     // Find recipes by ingredients with partial match
-    List<Recipe> findRecipesByIngredients(String ingredientsKeyword);
+    List<RecipeDTOWithUsers> findRecipesByIngredients(String ingredientsKeyword);
 
     // Find recipes by author ID
-    List<Recipe> findRecipesByAuthorId(int authorId);
+    List<RecipeDTOWithUsers> findRecipesByAuthorId(int authorId);
 
     // Additional filtering (category, type, cuisine, etc.)
-    List<Recipe> findRecipesByCategory(String category);
-    List<Recipe> findRecipesByType(int typeId);
-    List<Recipe> findRecipesByCuisine(int cuisineId);
+    List<RecipeDTOWithUsers> findRecipesByCategory(String category);
+    List<RecipeDTOWithUsers> findRecipesByType(int typeId);
+    List<RecipeDTOWithUsers> findRecipesByCuisine(int cuisineId);
 
     // Retrieve all recipes (with optional pagination)
-    List<Recipe> getAllRecipes(int page, int size);
+    List<RecipeDTOWithUsers> getAllRecipes(int page, int size);
 }
