@@ -13,7 +13,10 @@ import java.util.Optional;
 public interface UserDAO extends JpaRepository<User, Integer> {
 
     Optional<User> findByEmail(String email);
+
+    Optional<User> findByVerificationToken(String verificationToken);
     boolean existsByEmail(String email);
+
     @Query("SELECT u FROM User u WHERE u.firstName = ?1 AND u.lastName = ?2")
     List<User> findByFirstNameAndLastName(String firstName, String lastName);
 

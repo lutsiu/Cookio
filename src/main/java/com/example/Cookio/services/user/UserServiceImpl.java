@@ -9,6 +9,7 @@ import com.example.Cookio.exceptions.user.UserAlreadyExistsException;
 import com.example.Cookio.exceptions.user.UserNotFoundException;
 import com.example.Cookio.models.Recipe;
 import com.example.Cookio.models.User;
+import com.example.Cookio.services.email.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,12 +23,17 @@ public class UserServiceImpl implements UserService {
     private final UserDAO userDAO;
     private final RecipeDAO recipeDAO;
 
+    private final EmailService emailService;
+
     private final PasswordEncoder encoder;
 
     @Autowired
-    public UserServiceImpl(UserDAO userDAO, RecipeDAO recipeDAO, PasswordEncoder encoder) {
+    public UserServiceImpl(UserDAO userDAO, RecipeDAO recipeDAO,
+                           EmailService emailService,
+                           PasswordEncoder encoder) {
         this.userDAO = userDAO;
         this.recipeDAO = recipeDAO;
+        this.emailService = emailService;
         this.encoder = encoder;
     }
 
@@ -42,8 +48,20 @@ public class UserServiceImpl implements UserService {
             throw new PasswordTooWeakException();
         }
 
+        // encode password
         user.setPassword(encoder.encode(user.getPassword()));
+
+        // generate verification token for email
+
+        String token = UUID.randomUUID().toString();
+        user.setVerificationToken(token);
+        user.setEmailVerified(false);
+
+        // save user to database
         User savedUser = userDAO.save(user);
+
+        emailService.sendVerificationEmail(savedUser.getEmail(), token);
+
         return UserDTO.fromUser(savedUser);
     }
 
@@ -158,6 +176,29 @@ public class UserServiceImpl implements UserService {
                 new RecipeNotFoundException("Recipe with id " + recipeId + " is not found"));
         user.removeRecipe(recipe);
         userDAO.save(user);
+    }
+
+    @Override
+    public boolean verifyUser(String token) {
+        Optional<User> optionalUser = userDAO.findByVerificationToken(token);
+
+        if (optionalUser.isEmpty()) {
+            // User not found
+            return false;
+        }
+
+        User user = optionalUser.get();
+
+        if (user.isEmailVerified()) {
+            // User is already verified
+            return false;
+        }
+
+        user.setVerificationToken(null);
+        user.setEmailVerified(true);
+        userDAO.save(user);
+
+        return true;
     }
 
 }

@@ -65,8 +65,13 @@ public class User {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @ManyToMany
+    @Column(name = "is_email_verified")
+    private boolean isEmailVerified;
 
+    @Column(name = "verification_token", length = 255)
+    private String verificationToken;
+
+    @ManyToMany
     @JoinTable(
             name = "user_recipe",
             joinColumns = @JoinColumn(name = "user_id"),

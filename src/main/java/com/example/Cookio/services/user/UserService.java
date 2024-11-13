@@ -33,4 +33,19 @@ public interface UserService {
 
     void removeRecipeFromUser(int userId, int recipeId);
 
+    boolean verifyUser(String token);
 }
+
+/*
+
+* 1. Basic Authentication and Authorization Setup
+
+2. Email Verification (for Sign-Up)
+
+3. Password Reset
+
+4. OAuth2 for Google and Facebook Sign-In
+
+5. JWT Management and Security Best Practices
+
+* */

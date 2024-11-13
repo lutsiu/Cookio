@@ -25,18 +25,17 @@ public class UserDTO {
     private String email;
     private String avatar;
     private String bio;
-
-
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-
+    private boolean isEmailVerified;
+    private String verificationToken;
     private Set<RecipeDTONoUser> recipes;
 
     public static UserDTO fromUser(User user) {
-        // Convert the user entity to the UserDTO
-        Set<RecipeDTONoUser> recipeDTOs = user.getSavedRecipes().stream()
-                .map(RecipeDTONoUser::fromRecipe)  // Convert each Recipe to RecipeDTO
-                .collect(Collectors.toSet()); // Collect the converted RecipeDTOs
+        // Check if savedRecipes is null or empty before processing
+        Set<RecipeDTONoUser> recipeDTOs = (user.getSavedRecipes() == null || user.getSavedRecipes().isEmpty()) ?
+                null :
+                user.getSavedRecipes().stream()
+                        .map(RecipeDTONoUser::fromRecipe)  // Convert each Recipe to RecipeDTO
+                        .collect(Collectors.toSet()); // Collect the converted RecipeDTOs
 
         return new UserDTO(
                 user.getId(),
@@ -45,9 +44,10 @@ public class UserDTO {
                 user.getEmail(),
                 user.getAvatar(),
                 user.getBio(),
-                user.getCreatedAt(),
-                user.getUpdatedAt(),
+                user.isEmailVerified(),
+                user.getVerificationToken(),
                 recipeDTOs
         );
     }
+
 }

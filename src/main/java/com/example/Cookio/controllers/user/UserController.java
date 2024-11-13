@@ -57,6 +57,15 @@ public class UserController {
         return users.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(users);
     }
 
+    @GetMapping("/verify")
+    private ResponseEntity<String> verifyUser(@RequestParam("token") String token) {
+        boolean isVerified = userService.verifyUser(token);
+        return isVerified
+                ? ResponseEntity.ok("Email verified successfully!")
+                : ResponseEntity.badRequest().body("Verification failed. Invalid token.");
+    }
+
+
     @PatchMapping("/{id}/change-password")
     private ResponseEntity<String> changePassword(
             @PathVariable int id,
