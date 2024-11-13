@@ -1,6 +1,6 @@
 package com.example.Cookio.dto.recipe;
 
-import com.example.Cookio.dto.UserDTO;
+import com.example.Cookio.dto.user.UserDTO;
 import com.example.Cookio.models.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

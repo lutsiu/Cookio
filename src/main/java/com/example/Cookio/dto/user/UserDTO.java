@@ -1,17 +1,10 @@
-package com.example.Cookio.dto;
+package com.example.Cookio.dto.user;
 
 import com.example.Cookio.dto.recipe.RecipeDTONoUser;
-import com.example.Cookio.models.Ingredient;
-import com.example.Cookio.models.Recipe;
 import com.example.Cookio.models.User;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.stream.Collectors;
 

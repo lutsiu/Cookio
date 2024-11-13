@@ -1,15 +1,10 @@
 package com.example.Cookio.services.user;
 
-import com.example.Cookio.dao.user.UserDAO;
-import com.example.Cookio.dto.UserDTO;
-import com.example.Cookio.exceptions.recipe.RecipeNotFoundException;
-import com.example.Cookio.exceptions.user.UserNotFoundException;
-import com.example.Cookio.models.Recipe;
+import com.example.Cookio.dto.login.LoginRequestDTO;
+import com.example.Cookio.dto.user.UserDTO;
 import com.example.Cookio.models.User;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,6 +29,8 @@ public interface UserService {
     void removeRecipeFromUser(int userId, int recipeId);
 
     boolean verifyUser(String token);
+
+    String loginUser(LoginRequestDTO loginRequest);
 }
 
 /*

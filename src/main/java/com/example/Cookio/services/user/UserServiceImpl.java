@@ -2,7 +2,8 @@ package com.example.Cookio.services.user;
 
 import com.example.Cookio.dao.recipe.RecipeDAO;
 import com.example.Cookio.dao.user.UserDAO;
-import com.example.Cookio.dto.UserDTO;
+import com.example.Cookio.dto.login.LoginRequestDTO;
+import com.example.Cookio.dto.user.UserDTO;
 import com.example.Cookio.exceptions.recipe.RecipeNotFoundException;
 import com.example.Cookio.exceptions.user.PasswordTooWeakException;
 import com.example.Cookio.exceptions.user.UserAlreadyExistsException;
@@ -201,6 +202,34 @@ public class UserServiceImpl implements UserService {
         return true;
     }
 
+    @Override
+    public String loginUser(LoginRequestDTO loginRequest) {
+        Optional<User> optionalUser = userDAO.findByEmail(loginRequest.getEmail());
+
+        String invalidCredentials = "Invalid email or password";
+
+        if (optionalUser.isEmpty()) {
+            return invalidCredentials;
+        }
+
+        User user = optionalUser.get();
+
+        String rawPassword = loginRequest.getPassword().trim();
+
+        String encodedPassword = user.getPassword().trim();
+
+        // check whether email is verified
+        if (!user.isEmailVerified()) {
+            return "Please verify your email before logging in";
+        }
+
+        if (!encoder.matches(rawPassword, encodedPassword)) {
+            return invalidCredentials;
+        }
+
+        return "Login successfully";
+
+    }
 }
 
 /*

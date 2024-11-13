@@ -1,16 +1,15 @@
 package com.example.Cookio.controllers.user;
 
-import com.example.Cookio.dto.UserDTO;
+import com.example.Cookio.dto.login.LoginRequestDTO;
+import com.example.Cookio.dto.user.UserDTO;
 import com.example.Cookio.models.User;
 import com.example.Cookio.services.user.UserService;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -63,6 +62,18 @@ public class UserController {
         return isVerified
                 ? ResponseEntity.ok("Email verified successfully!")
                 : ResponseEntity.badRequest().body("Verification failed. Invalid token.");
+    }
+
+    @PostMapping("/login")
+    private ResponseEntity<String> loginUser(@RequestBody LoginRequestDTO loginRequest) {
+        String response = userService.loginUser(loginRequest);
+
+        if ("Login successfully".equals(response)) {
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        }
+
     }
 
 
