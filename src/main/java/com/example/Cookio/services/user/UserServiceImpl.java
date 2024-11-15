@@ -10,6 +10,7 @@ import com.example.Cookio.models.Recipe;
 import com.example.Cookio.models.User;
 import com.example.Cookio.services.email.EmailService;
 import com.example.Cookio.security.JWT;
+import com.example.Cookio.utils.PasswordValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -44,7 +45,7 @@ public class UserServiceImpl implements UserService {
         }
 
         // Validate password strength
-        if (!isPasswordStrong(user.getPassword())) {
+        if (!PasswordValidator.isPasswordStrong(user.getPassword())) {
             throw new PasswordTooWeakException();
         }
 
@@ -77,7 +78,7 @@ public class UserServiceImpl implements UserService {
                     if (updatedUser.getPassword() != null && !updatedUser.getPassword().isEmpty()) {
                         // Check if password is strong
 
-                        if (!isPasswordStrong(updatedUser.getPassword())) {
+                        if (!PasswordValidator.isPasswordStrong(updatedUser.getPassword())) {
                             throw new PasswordTooWeakException();
                         }
                         existingUser.setPassword(encoder.encode(updatedUser.getPassword()));
@@ -126,7 +127,7 @@ public class UserServiceImpl implements UserService {
         User user = userDAO.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found with id: " + userId));
 
-        if (!isPasswordStrong(newPassword)) {
+        if (!PasswordValidator.isPasswordStrong(newPassword)) {
             throw new PasswordTooWeakException();
         }
             user.setPassword(encoder.encode(newPassword));
@@ -145,20 +146,7 @@ public class UserServiceImpl implements UserService {
 
     // additional method to check whether password is strong enough
 
-    private boolean isPasswordStrong(String password) {
-        if (password == null || password.length() < 8) {
-            return false;
-        }
 
-        // REGULAR EXPRESSION CHECKS
-
-        boolean hasUppercase = password.matches(".*[A-Z].*");
-        boolean hasLowercase = password.matches(".*[a-z].*");
-        boolean hasDigit = password.matches(".*[0-9].*");
-        boolean hasSpecialChar = password.matches(".*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?.].*");
-
-        return hasUppercase && hasLowercase && hasDigit && hasSpecialChar;
-    }
 
     public void addRecipeToUser(int userId, int recipeId) {
         User user = userDAO.findById(userId).orElseThrow(() ->
