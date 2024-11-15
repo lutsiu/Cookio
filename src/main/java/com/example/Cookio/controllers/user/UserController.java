@@ -10,7 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Controller
@@ -65,14 +67,13 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    private ResponseEntity<String> loginUser(@RequestBody LoginRequestDTO loginRequest) {
-        String response = userService.loginUser(loginRequest);
+    private ResponseEntity<Map<String, String>> loginUser(@RequestBody LoginRequestDTO loginRequest) {
+        String token = userService.loginUser(loginRequest);
 
-        if ("Login successfully".equals(response)) {
-            return ResponseEntity.ok(response);
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-        }
+        Map<String, String> response = new HashMap<>();
+        response.put("jwt", token);
+
+        return ResponseEntity.ok(response);
 
     }
 

@@ -1,6 +1,6 @@
 package com.example.Cookio.models;
 
-import com.example.Cookio.helpers.RecipeIngredientId;
+import com.example.Cookio.utils.RecipeIngredientId;
 import jakarta.persistence.*;
 import lombok.*;
 

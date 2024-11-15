@@ -1,4 +1,4 @@
-package com.example.Cookio.helpers;
+package com.example.Cookio.utils;
 
 import lombok.Getter;
 import lombok.Setter;

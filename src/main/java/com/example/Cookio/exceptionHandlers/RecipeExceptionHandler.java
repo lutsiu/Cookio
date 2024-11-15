@@ -2,7 +2,7 @@ package com.example.Cookio.exceptionHandlers;
 
 import com.example.Cookio.exceptions.recipe.RecipeAlreadyExistsException;
 import com.example.Cookio.exceptions.recipe.RecipeNotFoundException;
-import com.example.Cookio.helpers.ErrorResponse;
+import com.example.Cookio.utils.ErrorResponse;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;

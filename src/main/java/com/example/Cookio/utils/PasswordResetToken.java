@@ -1,4 +1,4 @@
-package com.example.Cookio.helpers;
+package com.example.Cookio.utils;
 
 
 public class PasswordResetToken {

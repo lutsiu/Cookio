@@ -5,12 +5,11 @@ import com.example.Cookio.dao.user.UserDAO;
 import com.example.Cookio.dto.login.LoginRequestDTO;
 import com.example.Cookio.dto.user.UserDTO;
 import com.example.Cookio.exceptions.recipe.RecipeNotFoundException;
-import com.example.Cookio.exceptions.user.PasswordTooWeakException;
-import com.example.Cookio.exceptions.user.UserAlreadyExistsException;
-import com.example.Cookio.exceptions.user.UserNotFoundException;
+import com.example.Cookio.exceptions.user.*;
 import com.example.Cookio.models.Recipe;
 import com.example.Cookio.models.User;
 import com.example.Cookio.services.email.EmailService;
+import com.example.Cookio.security.JWT;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -206,10 +205,8 @@ public class UserServiceImpl implements UserService {
     public String loginUser(LoginRequestDTO loginRequest) {
         Optional<User> optionalUser = userDAO.findByEmail(loginRequest.getEmail());
 
-        String invalidCredentials = "Invalid email or password";
-
         if (optionalUser.isEmpty()) {
-            return invalidCredentials;
+            throw new InvalidCredentialsException();
         }
 
         User user = optionalUser.get();
@@ -220,14 +217,14 @@ public class UserServiceImpl implements UserService {
 
         // check whether email is verified
         if (!user.isEmailVerified()) {
-            return "Please verify your email before logging in";
+            throw new EmailNotVerifiedException();
         }
 
         if (!encoder.matches(rawPassword, encodedPassword)) {
-            return invalidCredentials;
+            throw new InvalidCredentialsException();
         }
 
-        return "Login successfully";
+        return JWT.generateToken(user.getEmail());
 
     }
 }
