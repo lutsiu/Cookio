@@ -27,7 +27,7 @@ public class EmailService {
         sendEmail(recipientEmail, subject, content);
     }
 
-    private void sendEmail(String recipientEmail, String subject, String content) {
+    public void sendEmail(String recipientEmail, String subject, String content) {
         try {
 
             MimeMessage message = mailSender.createMimeMessage();
