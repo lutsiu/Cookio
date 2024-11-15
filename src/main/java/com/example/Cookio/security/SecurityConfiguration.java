@@ -27,4 +27,21 @@ public class SecurityConfiguration {
     }
 
     // add middleware in the future
+
+    /* @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.csrf().disable() // Disable CSRF for simplicity (enable in production with proper config)
+            .authorizeHttpRequests(auth -> auth
+                .antMatchers("/auth/**").permitAll() // Allow public access to authentication endpoints
+                .anyRequest().authenticated() // Secure all other endpoints
+            )
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
+    }*/
 }
