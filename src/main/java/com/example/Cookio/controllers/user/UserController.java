@@ -74,7 +74,6 @@ public class UserController {
         response.put("jwt", token);
 
         return ResponseEntity.ok(response);
-
     }
 
 

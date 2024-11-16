@@ -10,7 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
-
+@EnableWebSecurity
 public class SecurityConfiguration {
 
 
@@ -27,6 +27,30 @@ public class SecurityConfiguration {
     }
 
     // add middleware in the future
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .csrf(csrf -> {
+                    try {
+                        csrf.disable()
+                                .authorizeHttpRequests(auth -> auth
+                                        .requestMatchers("/oauth2/**", "/api/users/login",
+                                                "/api/users/create")
+                                        .permitAll()
+                                        .anyRequest().
+                                        authenticated()
+                        ).oauth2Login(oauth2 -> oauth2
+                                        .defaultSuccessUrl("/oauth2/success", true) // Redirect here after login
+                        );
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+
+        return http.build();
+    }
+
 
     /* @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
