@@ -26,12 +26,6 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("/create")
-    private ResponseEntity<UserDTO> createUser(@RequestBody User user) {
-        UserDTO createdUser = userService.createUser(user);
-        return ResponseEntity.ok(createdUser);
-    }
-
     @PutMapping("/{id}")
     private ResponseEntity<UserDTO> updateUser(@PathVariable int id, @RequestBody User updatedUser) {
         Optional<UserDTO> updated = userService.updateUser(id, updatedUser);
@@ -64,16 +58,6 @@ public class UserController {
         return isVerified
                 ? ResponseEntity.ok("Email verified successfully!")
                 : ResponseEntity.badRequest().body("Verification failed. Invalid token.");
-    }
-
-    @PostMapping("/login")
-    private ResponseEntity<Map<String, String>> loginUser(@RequestBody LoginRequestDTO loginRequest) {
-        String token = userService.loginUser(loginRequest);
-
-        Map<String, String> response = new HashMap<>();
-        response.put("jwt", token);
-
-        return ResponseEntity.ok(response);
     }
 
 
