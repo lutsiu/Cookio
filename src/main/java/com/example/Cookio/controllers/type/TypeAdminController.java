@@ -5,12 +5,14 @@ import com.example.Cookio.services.type.TypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/admin/types")
+@PreAuthorize("hasRole('ADMIN')")
 public class TypeAdminController {
     private final TypeService typeService;
 

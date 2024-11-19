@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
+/*!!! DON'T FORGET TO ADD EXCEPTIONS FOR UNAUTHORIZED USERS and INVALID PATHS*/
 @RestController
 @RequestMapping("/api/client/users")
 public class UserClientController {

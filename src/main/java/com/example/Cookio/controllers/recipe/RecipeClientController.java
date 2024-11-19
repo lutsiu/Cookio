@@ -1,37 +1,28 @@
 package com.example.Cookio.controllers.recipe;
 
 import com.example.Cookio.dto.recipe.RecipeDTOWithUsers;
-import com.example.Cookio.models.Recipe;
 import com.example.Cookio.services.recipe.RecipeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
-import org.springframework.stereotype.Controller;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
-@Controller
+@RestController
 @RequestMapping("/api/client/recipes")
-public class RecipeController {
+@PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+// UNTESTED
+public class RecipeClientController {
 
     private final RecipeService recipeService;
 
     @Autowired
-    public RecipeController(RecipeService recipeService) {
+    public RecipeClientController(RecipeService recipeService) {
         this.recipeService = recipeService;
     }
 
-    // Endpoint to create a new recipe +
-    @PostMapping("/create")
-    public ResponseEntity<RecipeDTOWithUsers> createRecipe(@RequestBody Recipe recipe) {
-        RecipeDTOWithUsers savedRecipe = recipeService.createRecipe(recipe);
-        return ResponseEntity.ok(savedRecipe);
-    }
-
-    // Endpoint to get all recipes with pagination +
     @GetMapping
     public ResponseEntity<List<RecipeDTOWithUsers>> getAllRecipes(
             @RequestParam(defaultValue = "0") int page,
@@ -67,8 +58,6 @@ public class RecipeController {
         List<RecipeDTOWithUsers> recipes = recipeService.findRecipesByIngredients(ingredients);
         return ResponseEntity.ok(recipes);
     }
-
-    // Endpoint to get recipes by author ID +
     @GetMapping("/author/{authorId}")
     public ResponseEntity<List<RecipeDTOWithUsers>> findRecipesByAuthor(@PathVariable int authorId) {
         List<RecipeDTOWithUsers> recipes = recipeService.findRecipesByAuthorId(authorId);
@@ -96,17 +85,4 @@ public class RecipeController {
         return ResponseEntity.ok(recipes);
     }
 
-    // Endpoint to update an existing recipe by ID +
-    @PutMapping("/{id}")
-    public ResponseEntity<RecipeDTOWithUsers> updateRecipe(@PathVariable int id, @RequestBody Recipe recipe) {
-        Optional<RecipeDTOWithUsers> updatedRecipe = recipeService.updateRecipe(id, recipe);
-        return updatedRecipe.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
-    // Endpoint to delete a recipe by ID +
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteRecipe(@PathVariable int id) {
-        boolean deleted = recipeService.deleteRecipe(id);
-        return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
-    }
 }
