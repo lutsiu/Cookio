@@ -12,6 +12,8 @@ import java.util.Optional;
 public interface UserService {
     UserDTO createUser(User user);
 
+    List<UserDTO> getAllUsers();
+
     Optional<UserDTO> getUserById(int id);
 
     Optional<UserDTO> getUserByEmail(String email);

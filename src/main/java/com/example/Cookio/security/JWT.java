@@ -12,12 +12,12 @@ import java.util.Date;
 public class JWT {
 
     private static final Key SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-
     private static final long EXPIRATION_TIME = 86400000; // 24 hours in ms
 
-    public static String generateToken(String email) {
+    public static String generateToken(String email, String role) {
         return Jwts.builder()
                 .setSubject(email)
+                .claim("role", "ROLE_" + role.toUpperCase()) // Add ROLE_ prefix in JWT
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .setIssuer("Cookio")
@@ -25,7 +25,7 @@ public class JWT {
                 .compact();
     }
 
-    public static String validateToken(String token) {
+    public static Claims validateToken(String token) {
         try {
             Claims claims = Jwts.parserBuilder()
                     .setSigningKey(SECRET_KEY)
@@ -36,11 +36,11 @@ public class JWT {
             if (!"Cookio".equals(claims.getIssuer())) {
                 throw new InvalidIssuerException(claims.getIssuer());
             }
-            return claims.getSubject(); // returns email of user
+
+            return claims; // Return full claims for further processing
 
         } catch (ExpiredJwtException e) {
-           throw new ExpiredTokenException();
-
+            throw new ExpiredTokenException();
         } catch (JwtException e) {
             throw new InvalidTokenException();
         }

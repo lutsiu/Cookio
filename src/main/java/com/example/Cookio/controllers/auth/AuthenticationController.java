@@ -6,10 +6,7 @@ import com.example.Cookio.models.User;
 import com.example.Cookio.services.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,4 +37,14 @@ public class AuthenticationController {
 
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/verify")
+    private ResponseEntity<String> verifyUser(@RequestParam("token") String token) {
+        boolean isVerified = service.verifyUser(token);
+        return isVerified
+                ? ResponseEntity.ok("Email verified successfully!")
+                : ResponseEntity.badRequest().body("Verification failed. Invalid token.");
+    }
+
+
 }

@@ -1,12 +1,14 @@
 package com.example.Cookio.controllers.user;
 
 import com.example.Cookio.dto.login.LoginRequestDTO;
+import com.example.Cookio.dto.recipe.RecipeDTOWithUsers;
 import com.example.Cookio.dto.user.UserDTO;
 import com.example.Cookio.models.User;
 import com.example.Cookio.services.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,6 +34,7 @@ public class UserController {
         return updated.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
+
     @GetMapping("/{id}")
     private ResponseEntity<UserDTO> getUserById(@PathVariable int id) {
         Optional<UserDTO> user = userService.getUserById(id);
@@ -51,15 +54,6 @@ public class UserController {
         List<UserDTO> users = userService.findByFirstNameAndLastName(firstName, lastName);
         return users.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(users);
     }
-
-    @GetMapping("/verify")
-    private ResponseEntity<String> verifyUser(@RequestParam("token") String token) {
-        boolean isVerified = userService.verifyUser(token);
-        return isVerified
-                ? ResponseEntity.ok("Email verified successfully!")
-                : ResponseEntity.badRequest().body("Verification failed. Invalid token.");
-    }
-
 
     @PatchMapping("/{id}/change-password")
     private ResponseEntity<String> changePassword(

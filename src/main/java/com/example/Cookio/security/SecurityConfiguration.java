@@ -11,13 +11,15 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
 
-
-   private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Autowired
     public SecurityConfiguration(JwtAuthenticationFilter jwtAuthenticationFilter) {
@@ -29,35 +31,36 @@ public class SecurityConfiguration {
         return new BCryptPasswordEncoder();
     }
 
-    // add middleware in the future
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(c -> {
-                try {
-                    c.disable()
-                        .authorizeHttpRequests(auth -> auth
-                                .requestMatchers("/login",
-                                        "/register")
-                                .permitAll()
-                                .anyRequest().authenticated())
-                        .formLogin(form -> form
-                                .loginPage("/login")
-                                .defaultSuccessUrl("/dashboard")
-                                .permitAll())
-                        .oauth2Login(o -> o
-                                .loginPage("/login")
-                                .defaultSuccessUrl("/oauth2/success"))
-                        .logout(logout -> logout
-                                .logoutUrl("/logout")
-                                .logoutSuccessUrl("/")
-                                .permitAll())
-                        .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            });
+                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Enable CORS
+                .csrf(csrf -> csrf.disable()) // Disable CSRF for now (if needed for development)
+                .authorizeHttpRequests(auth -> auth
+
+                        // public endpoints
+                        .requestMatchers("/auth/**")
+                        .permitAll()
+
+                        // endpoints accessible by authenticated users
+                        .requestMatchers("/api/client/**").authenticated()
+                        // endpoints restricted to admins
+                        .requestMatchers("/api/admin").hasRole("ADMIN")
+
+                        // any other requests
+                        .anyRequest().denyAll())
+                .formLogin(form -> form
+                        .loginPage("http://127.0.0.1:5500/HTML_62631/login.html")
+                        .defaultSuccessUrl("http://127.0.0.1:5500/HTML_62631/dashboard.html")
+                        .permitAll())
+                .oauth2Login(oauth2 -> oauth2
+                        .loginPage("http://127.0.0.1:5500/HTML_62631/login.html")
+                        .defaultSuccessUrl("/oauth2/success"))
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/")
+                        .permitAll())
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -66,4 +69,18 @@ public class SecurityConfiguration {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.addAllowedOrigin("http://127.0.0.1:5500"); // Front-end origin
+        configuration.addAllowedHeader("*"); // Allow all headers
+        configuration.addAllowedMethod("*"); // Allow all HTTP methods
+        configuration.setAllowCredentials(true); // Allow cookies/auth headers
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration); // Apply CORS settings globally
+        return source;
+    }
 }
+
