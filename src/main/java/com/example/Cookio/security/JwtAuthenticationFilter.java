@@ -37,21 +37,26 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             Claims claims = JWT.validateToken(token); // Validate and extract claims
 
-            String email = claims.getSubject(); // Extract email
+            String userId = claims.getSubject();
+            String email = claims.get("email", String.class); // Extract email
             String role = claims.get("role", String.class); // Extract role (already prefixed with ROLE_)
 
 
             // Create authorities based on the role
             SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role);
-            UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(email, null, Collections.singletonList(authority));
 
-            System.out.println("Role extracted from JWT: " + role);
-            System.out.println("Authorities: " + Collections.singletonList(authority));
-            System.out.println(authentication.getAuthorities());
+            CustomPrincipal principal = new CustomPrincipal(Integer.parseInt(userId), email);
+
+            UsernamePasswordAuthenticationToken authentication =
+                    new UsernamePasswordAuthenticationToken(principal,
+                            null, Collections.singletonList(authority));
+
             // Set authentication in security context
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
+            System.out.println(authentication.getAuthorities());
+            System.out.println(authentication.getPrincipal());
+            System.out.println(authentication.getDetails());
         } catch (JwtException e) {
             // Handle invalid token scenarios
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

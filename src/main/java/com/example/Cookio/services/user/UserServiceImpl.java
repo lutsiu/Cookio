@@ -96,6 +96,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<UserDTO> getAllUsers() {
+        return userDAO.findAll()
+                .stream().map(UserDTO::fromUser)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public Optional<UserDTO> getUserById(int id) {
         return userDAO.findById(id)
                 .map(UserDTO::fromUser)
@@ -103,6 +110,8 @@ public class UserServiceImpl implements UserService {
                     throw new UserNotFoundException("User not found with id: " + id);
                 });
     }
+
+
 
     @Override
     public Optional<UserDTO> getUserByEmail(String email) {
@@ -212,21 +221,15 @@ public class UserServiceImpl implements UserService {
             throw new InvalidCredentialsException();
         }
 
-        return JWT.generateToken(user.getEmail());
+        String role = user.getRole().toString().toUpperCase();
+        return JWT.generateToken(user.getId(), user.getEmail(), role);
 
     }
 }
 
 /*
 *
-* Password Reset Functionality:
-
-    Implement a mechanism to reset the password. This can involve generating a secure token sent to the user’s email, which allows them to set a new password.
-
-Email Verification:
-
-    Require users to verify their email address upon registration. This can help ensure the authenticity of user accounts.
-
+*
 Role Management:
 
     Allow for user roles (like ADMIN, USER) and implement methods to assign or change roles.
@@ -235,17 +238,9 @@ Profile Picture Upload:
 
     Implement functionality to upload and update user profile pictures.
 
-User Activity Logging:
-
-    Log user activities (like last login time, profile updates) for better tracking and auditing.
-
 Account Locking:
 
     Implement account locking after a certain number of failed login attempts to enhance security.
-
-Enhanced Validation:
-
-    Add more robust validation for user data, such as checking for strong passwords.
 
 Pagination for User Queries:
 

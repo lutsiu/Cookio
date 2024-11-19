@@ -14,9 +14,11 @@ public class JWT {
     private static final Key SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
     private static final long EXPIRATION_TIME = 86400000; // 24 hours in ms
 
-    public static String generateToken(String email, String role) {
+    public static String generateToken(Integer userId, String email, String role) {
+        // pass user and set id as subject, claim("email", user.getEmail()), etc
         return Jwts.builder()
-                .setSubject(email)
+                .setSubject(userId.toString())
+                .claim("email", email)
                 .claim("role", "ROLE_" + role.toUpperCase()) // Add ROLE_ prefix in JWT
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))

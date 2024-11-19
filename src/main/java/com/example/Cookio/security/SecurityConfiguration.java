@@ -5,6 +5,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -17,6 +19,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfiguration {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -45,10 +48,10 @@ public class SecurityConfiguration {
                         // endpoints accessible by authenticated users
                         .requestMatchers("/api/client/**").authenticated()
                         // endpoints restricted to admins
-                        .requestMatchers("/api/admin").hasRole("ADMIN")
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
 
-                        // any other requests
-                        .anyRequest().denyAll())
+                        /*// any other requests
+                        .anyRequest().denyAll()*/)
                 .formLogin(form -> form
                         .loginPage("http://127.0.0.1:5500/HTML_62631/login.html")
                         .defaultSuccessUrl("http://127.0.0.1:5500/HTML_62631/dashboard.html")
@@ -73,7 +76,7 @@ public class SecurityConfiguration {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("http://127.0.0.1:5500"); // Front-end origin
+        configuration.addAllowedOrigin("*"); // Front-end origin
         configuration.addAllowedHeader("*"); // Allow all headers
         configuration.addAllowedMethod("*"); // Allow all HTTP methods
         configuration.setAllowCredentials(true); // Allow cookies/auth headers
