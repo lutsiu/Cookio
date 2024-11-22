@@ -20,6 +20,9 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import javax.security.sasl.AuthenticationException;
+import java.nio.file.AccessDeniedException;
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -96,18 +99,14 @@ public class SecurityConfiguration {
     @Bean
     public AccessDeniedHandler customAccessDeniedHandler() {
         return (request, response, accessDeniedException) -> {
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            response.setContentType("application/json");
-            response.getWriter().write("{\"error\": \"Access is denied\"}");
+            throw new AccessDeniedException("You do not have permission to access this resource");
         };
     }
 
     @Bean
     public AuthenticationEntryPoint customAuthenticationEntryPoint() {
         return (request, response, authException) -> {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.setContentType("application/json");
-            response.getWriter().write("{\"error\": \"Unauthorized\"}");
+            throw new RuntimeException("You must log in to access this resource");
         };
     }
 }
