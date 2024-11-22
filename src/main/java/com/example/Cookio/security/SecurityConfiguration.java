@@ -96,7 +96,7 @@ public class SecurityConfiguration {
         return source;
     }
 
-    @Bean
+    /*@Bean
     public AccessDeniedHandler customAccessDeniedHandler() {
         return (request, response, accessDeniedException) -> {
             throw new AccessDeniedException("You do not have permission to access this resource");
@@ -107,6 +107,25 @@ public class SecurityConfiguration {
     public AuthenticationEntryPoint customAuthenticationEntryPoint() {
         return (request, response, authException) -> {
             throw new RuntimeException("You must log in to access this resource");
+        };
+    }*/
+
+    @Bean
+    public AccessDeniedHandler customAccessDeniedHandler() {
+        return (request, response, accessDeniedException) -> {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            response.setContentType("application/json");
+            response.getWriter().write("{\"message\": \"You do not have permission to access" +
+                    " this resource or this resource doesn't exist\"}");
+        };
+    }
+
+    @Bean
+    public AuthenticationEntryPoint customAuthenticationEntryPoint() {
+        return (request, response, authException) -> {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.getWriter().write("{\"message\": \"You must log in to access this resource\"}");
         };
     }
 }
