@@ -1,15 +1,19 @@
 package com.example.Cookio.security;
 
-import com.example.Cookio.exceptions.jwt.ExpiredTokenException;
 import com.example.Cookio.exceptions.jwt.InvalidIssuerException;
 import com.example.Cookio.exceptions.jwt.InvalidTokenException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.security.Key;
 import java.util.Date;
 
 public class JWT {
+
+    @Autowired
+    private HandlerExceptionResolver handlerExceptionResolver;
 
     private static final Key SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
     private static final long EXPIRATION_TIME = 86400000; // 24 hours in ms
@@ -41,10 +45,14 @@ public class JWT {
 
             return claims; // Return full claims for further processing
 
-        } catch (ExpiredJwtException e) {
-            throw new ExpiredTokenException();
-        } catch (JwtException e) {
-            throw new InvalidTokenException();
+        } catch (MalformedJwtException ex) {
+            throw new MalformedJwtException("Invalid JWT token was provided");
+        } catch (ExpiredJwtException ex) {
+            throw new ExpiredJwtException(ex.getHeader(), ex.getClaims(), ex.getMessage());
+        } catch (UnsupportedJwtException ex) {
+            throw new UnsupportedJwtException(ex.getMessage());
+        } catch (IllegalArgumentException ex) {
+            throw new IllegalArgumentException(ex.getMessage());
         }
     }
 }

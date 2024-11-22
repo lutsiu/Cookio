@@ -1,23 +1,28 @@
 package com.example.Cookio.security;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
+import com.example.Cookio.exceptions.security.JwtAuthenticationException;
+import io.jsonwebtoken.*;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.io.IOException;
 import java.util.Collections;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
+    @Autowired
+    private HandlerExceptionResolver handlerExceptionResolver;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -54,16 +59,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             // Set authentication in security context
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            System.out.println(authentication.getAuthorities());
-            System.out.println(authentication.getPrincipal());
-            System.out.println(authentication.getDetails());
-        } catch (JwtException e) {
-            // Handle invalid token scenarios
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("Unauthorized: " + e.getMessage());
-            return;
-        }
+        } catch (MalformedJwtException | ExpiredJwtException
+                | UnsupportedJwtException | IllegalArgumentException  ex ) {
+            handlerExceptionResolver.resolveException(
+                    request, response, null, new JwtAuthenticationException(ex.getMessage())
+            );
 
+            // handle the stack trace with errors in the future
+        }
         filterChain.doFilter(request, response); // Continue with the next filter
     }
 }

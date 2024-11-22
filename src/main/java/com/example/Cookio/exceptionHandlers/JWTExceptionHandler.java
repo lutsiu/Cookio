@@ -3,6 +3,7 @@ package com.example.Cookio.exceptionHandlers;
 import com.example.Cookio.exceptions.jwt.ExpiredTokenException;
 import com.example.Cookio.exceptions.jwt.InvalidIssuerException;
 import com.example.Cookio.exceptions.jwt.InvalidTokenException;
+import com.example.Cookio.exceptions.security.JwtAuthenticationException;
 import com.example.Cookio.utils.ErrorResponse;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -40,6 +41,15 @@ public class JWTExceptionHandler {
 
     @ExceptionHandler(ExpiredTokenException.class)
     public ResponseEntity<ErrorResponse> handleExpiredTokenException(ExpiredTokenException exc) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.UNAUTHORIZED.value(),
+                exc.getMessage(),
+                LocalDateTime.now()
+        );
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+    }
+    @ExceptionHandler(JwtAuthenticationException.class)
+    public ResponseEntity<ErrorResponse> handleJwtAuthentication(JwtAuthenticationException exc) {
         ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.UNAUTHORIZED.value(),
                 exc.getMessage(),
