@@ -48,7 +48,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(auth -> auth
 
                         // public endpoints
-                        .requestMatchers("/auth/**")
+                        .requestMatchers("/auth/**", "/oauth2/**")
                         .permitAll()
 
                         // endpoints accessible by authenticated users
@@ -86,7 +86,7 @@ public class SecurityConfiguration {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("*"); // Front-end origin
+        configuration.addAllowedOrigin("http://127.0.0.1:5500"); // Front-end origin
         configuration.addAllowedHeader("*"); // Allow all headers
         configuration.addAllowedMethod("*"); // Allow all HTTP methods
         configuration.setAllowCredentials(true); // Allow cookies/auth headers
@@ -95,21 +95,6 @@ public class SecurityConfiguration {
         source.registerCorsConfiguration("/**", configuration); // Apply CORS settings globally
         return source;
     }
-
-    /*@Bean
-    public AccessDeniedHandler customAccessDeniedHandler() {
-        return (request, response, accessDeniedException) -> {
-            throw new AccessDeniedException("You do not have permission to access this resource");
-        };
-    }
-
-    @Bean
-    public AuthenticationEntryPoint customAuthenticationEntryPoint() {
-        return (request, response, authException) -> {
-            throw new RuntimeException("You must log in to access this resource");
-        };
-    }*/
-
     @Bean
     public AccessDeniedHandler customAccessDeniedHandler() {
         return (request, response, accessDeniedException) -> {

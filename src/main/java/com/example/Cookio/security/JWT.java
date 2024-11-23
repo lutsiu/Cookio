@@ -12,9 +12,6 @@ import java.util.Date;
 
 public class JWT {
 
-    @Autowired
-    private HandlerExceptionResolver handlerExceptionResolver;
-
     private static final Key SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
     private static final long EXPIRATION_TIME = 86400000; // 24 hours in ms
 
