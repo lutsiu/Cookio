@@ -5,6 +5,7 @@ import com.example.Cookio.dao.ingredient.IngredientDAO;
 import com.example.Cookio.dao.recipe.RecipeDAO;
 import com.example.Cookio.dao.type.TypeDAO;
 import com.example.Cookio.dao.user.UserDAO;
+import com.example.Cookio.dto.recipe.RecipeDTONoUser;
 import com.example.Cookio.dto.recipe.RecipeDTOWithUsers;
 import com.example.Cookio.exceptions.cuisine.CuisineNotFoundException;
 import com.example.Cookio.exceptions.ingredient.IngredientNotFoundException;
@@ -47,7 +48,9 @@ public class RecipeServiceImpl implements RecipeService {
 
     @Override
     public RecipeDTOWithUsers createRecipe(Recipe recipe) {
+        System.out.println(recipe.getAuthor().getEmail());
         boolean recipeIsAlreadyCreated = this.isDuplicateRecipe(recipe);
+
 
         if (recipeIsAlreadyCreated) {
             throw new RecipeAlreadyExistsException("Recipe with this data already exists");
@@ -145,6 +148,12 @@ public class RecipeServiceImpl implements RecipeService {
     public List<RecipeDTOWithUsers> getAllRecipes(int page, int size) {
         return recipeDAO.findAll(PageRequest.of(page, size)).getContent()
                 .stream().map(RecipeDTOWithUsers::fromRecipe).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<RecipeDTONoUser> getAllRecipesNoIngredientsNoUsers(int page, int size) {
+        return recipeDAO.findAll(PageRequest.of(page, size)).getContent()
+                .stream().map(RecipeDTONoUser::fromRecipe).collect(Collectors.toList());
     }
 
     private boolean isDuplicateRecipe(Recipe recipe) {

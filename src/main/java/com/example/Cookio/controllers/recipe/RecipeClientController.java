@@ -1,5 +1,6 @@
 package com.example.Cookio.controllers.recipe;
 
+import com.example.Cookio.dto.recipe.RecipeDTONoUser;
 import com.example.Cookio.dto.recipe.RecipeDTOWithUsers;
 import com.example.Cookio.services.recipe.RecipeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +25,10 @@ public class RecipeClientController {
     }
 
     @GetMapping
-    public ResponseEntity<List<RecipeDTOWithUsers>> getAllRecipes(
+    public ResponseEntity<List<RecipeDTONoUser>> getAllRecipes(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        List<RecipeDTOWithUsers> recipes = recipeService.getAllRecipes(page, size);
+        List<RecipeDTONoUser> recipes = recipeService.getAllRecipesNoIngredientsNoUsers(page, size);
         return ResponseEntity.ok(recipes);
     }
 

@@ -1,13 +1,16 @@
 package com.example.Cookio.services.recipe;
 
+import com.example.Cookio.dto.recipe.RecipeDTONoUser;
 import com.example.Cookio.dto.recipe.RecipeDTOWithUsers;
 import com.example.Cookio.models.Recipe;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public interface RecipeService {
     // Create a new recipe
@@ -41,4 +44,7 @@ public interface RecipeService {
 
     // Retrieve all recipes (with optional pagination)
     List<RecipeDTOWithUsers> getAllRecipes(int page, int size);
+
+
+    public List<RecipeDTONoUser> getAllRecipesNoIngredientsNoUsers(int page, int size);
 }

@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/admin/types")
+@RequestMapping("/api/client/cuisines")
 @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
 // untested
 public class CuisineClientController {

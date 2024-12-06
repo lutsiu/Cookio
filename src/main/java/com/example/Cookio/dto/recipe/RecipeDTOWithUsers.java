@@ -29,8 +29,11 @@ public class RecipeDTOWithUsers {
 
         UserDTO convertedAuthor = UserDTO.fromUser(recipe.getAuthor());
 
-        Set<UserDTO> convertedUsers = recipe.getUsers()
-                .stream().map(UserDTO::fromUser).collect(Collectors.toSet());
+        Set<UserDTO> convertedUsers = (recipe.getUsers() == null || recipe.getUsers().isEmpty()) ?
+                null :
+                recipe.getUsers().stream()
+                        .map(UserDTO::fromUser)  // Convert each User to UserDTO
+                        .collect(Collectors.toSet());  // Collect the converted UserDTOs
 
         return new RecipeDTOWithUsers(
                 recipe.getId(),
