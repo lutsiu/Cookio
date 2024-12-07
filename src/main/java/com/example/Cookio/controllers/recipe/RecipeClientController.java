@@ -24,7 +24,7 @@ public class RecipeClientController {
         this.recipeService = recipeService;
     }
 
-    @GetMapping
+    @GetMapping()
     public ResponseEntity<List<RecipeDTONoUser>> getAllRecipes(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {

@@ -11,6 +11,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import com.cloudinary.*;
+import com.cloudinary.utils.ObjectUtils;
+import io.github.cdimascio.dotenv.Dotenv;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -86,4 +89,26 @@ public class Recipe {
             inverseJoinColumns = @JoinColumn(name = "ingredient_id")
     )
     private Set<Ingredient> ingredients = new HashSet<>();
+
+    @Override
+    public String toString() {
+        return "Recipe{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", instructions='" + instructions + '\'' +
+                ", description='" + description + '\'' +
+                ", image='" + image + '\'' +
+                ", author=" + author +
+                ", prepTime=" + prepTime +
+                ", cookTime=" + cookTime +
+                ", servings=" + servings +
+                ", category='" + category + '\'' +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", type=" + type +
+                ", cuisine=" + cuisine +
+                ", users=" + users +
+                ", ingredients=" + ingredients +
+                '}';
+    }
 }

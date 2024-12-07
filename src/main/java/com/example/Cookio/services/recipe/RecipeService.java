@@ -6,6 +6,7 @@ import com.example.Cookio.models.Recipe;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.swing.text.html.Option;
 import java.util.List;
@@ -14,13 +15,13 @@ import java.util.stream.Collectors;
 
 public interface RecipeService {
     // Create a new recipe
-    RecipeDTOWithUsers createRecipe(Recipe recipe);
+    RecipeDTOWithUsers createRecipe(Recipe recipe, MultipartFile image);
 
     // Retrieve a recipe by ID
     Optional<RecipeDTOWithUsers> getRecipeById(int id);
 
     // Update an existing recipe
-    Optional<RecipeDTOWithUsers> updateRecipe(int id, Recipe updatedRecipe);
+    Optional<RecipeDTOWithUsers> updateRecipe(int id, Recipe updatedRecipe, MultipartFile image);
 
     // Delete a recipe by ID
     boolean deleteRecipe(int id);

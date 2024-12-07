@@ -14,14 +14,19 @@ import com.example.Cookio.exceptions.recipe.RecipeNotFoundException;
 import com.example.Cookio.exceptions.type.TypeNotFoundException;
 import com.example.Cookio.exceptions.user.UserNotFoundException;
 import com.example.Cookio.models.*;
+import com.cloudinary.*;
+import com.cloudinary.utils.ObjectUtils;
+import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.swing.text.html.Option;
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -33,8 +38,8 @@ public class RecipeServiceImpl implements RecipeService {
     private final CuisineDAO cuisineDAO;
     private final TypeDAO typeDAO;
     private final UserDAO userDAO;
-
     private final IngredientDAO ingredientDAO;
+    private final Cloudinary cloudinary;
 
     @Autowired
     public RecipeServiceImpl(RecipeDAO recipeDAO, CuisineDAO cuisineDAO,
@@ -44,22 +49,48 @@ public class RecipeServiceImpl implements RecipeService {
         this.typeDAO = typeDAO;
         this.userDAO = userDAO;
         this.ingredientDAO = ingredientDAO;
+
+        // Load Cloudinary configuration
+        Dotenv dotenv = Dotenv.configure().load();
+        String cloudName = dotenv.get("CLOUDINARY_API_NAME");
+        String apiKey = dotenv.get("CLOUDINARY_API_KEY");
+        String apiSecret = dotenv.get("CLOUDINARY_API_SECRET");
+
+        this.cloudinary = new Cloudinary(ObjectUtils.asMap(
+                "cloud_name", cloudName,
+                "api_key", apiKey,
+                "api_secret", apiSecret
+        ));
     }
 
     @Override
-    public RecipeDTOWithUsers createRecipe(Recipe recipe) {
-        System.out.println(recipe.getAuthor().getEmail());
-        boolean recipeIsAlreadyCreated = this.isDuplicateRecipe(recipe);
-
-
-        if (recipeIsAlreadyCreated) {
+    public RecipeDTOWithUsers createRecipe(Recipe recipe, MultipartFile image) {
+        // Step 1: Check for duplicate recipes
+        if (isDuplicateRecipe(recipe)) {
             throw new RecipeAlreadyExistsException("Recipe with this data already exists");
         }
 
+        // Step 2: Validate the recipe fields
         validateRecipe(recipe);
 
+        // Step 3: Upload image to Cloudinary
+        if (image != null && !image.isEmpty()) {
+            try {
+                Map<String, Object> uploadResult =
+                        cloudinary.uploader().upload(image.getBytes(), ObjectUtils.emptyMap());
+                System.out.println(uploadResult);
+                recipe.setImage((String) uploadResult.get("url"));
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to upload image to Cloudinary", e);
+            }
+        } else {
+            throw new IllegalArgumentException("Image file is missing or invalid");
+        }
+
+        // Step 4: Save the recipe
         return RecipeDTOWithUsers.fromRecipe(recipeDAO.save(recipe));
     }
+
 
     @Override
     public Optional<RecipeDTOWithUsers> getRecipeById(int id) {
@@ -70,27 +101,35 @@ public class RecipeServiceImpl implements RecipeService {
                 });
     }
 
-
     @Override
-    public Optional<RecipeDTOWithUsers> updateRecipe(int id, Recipe updatedRecipe) {
+    public Optional<RecipeDTOWithUsers> updateRecipe(int id, Recipe updatedRecipe, MultipartFile image) {
         return Optional.ofNullable(recipeDAO.findById(id).map(existingRecipe -> {
+            // Validate the updated recipe
             validateRecipe(updatedRecipe);
+
+            // Update fields
             existingRecipe.setTitle(updatedRecipe.getTitle());
             existingRecipe.setDescription(updatedRecipe.getDescription());
             existingRecipe.setIngredients(updatedRecipe.getIngredients());
             existingRecipe.setInstructions(updatedRecipe.getInstructions());
-            existingRecipe.setImage(updatedRecipe.getImage());
-            existingRecipe.setPrepTime(updatedRecipe.getPrepTime());
-            existingRecipe.setCookTime(updatedRecipe.getCookTime());
-            existingRecipe.setServings(updatedRecipe.getServings());
-            existingRecipe.setCategory(updatedRecipe.getCategory());
-            existingRecipe.setType(updatedRecipe.getType());
-            existingRecipe.setCuisine(updatedRecipe.getCuisine());
 
+            // Update image (if provided)
+            if (image != null && !image.isEmpty()) {
+                try {
+                    Map<String, Object> uploadResult =
+                            cloudinary.uploader().upload(image.getBytes(), ObjectUtils.emptyMap());
+                    existingRecipe.setImage((String) uploadResult.get("url"));
+                } catch (Exception e) {
+                    throw new RuntimeException("Failed to update image on Cloudinary", e);
+                }
+            }
+
+            // Save the updated recipe
             Recipe savedRecipe = recipeDAO.save(existingRecipe);
             return RecipeDTOWithUsers.fromRecipe(savedRecipe);
         }).orElseThrow(() -> new RecipeNotFoundException("Recipe not found with id: " + id)));
     }
+
 
     @Override
     public boolean deleteRecipe(int id) {
@@ -133,7 +172,6 @@ public class RecipeServiceImpl implements RecipeService {
 
     @Override
     public List<RecipeDTOWithUsers> findRecipesByType(int typeId) {
-
         return recipeDAO.findByTypeId(typeId)
                 .stream().map(RecipeDTOWithUsers::fromRecipe).collect(Collectors.toList());
     }
