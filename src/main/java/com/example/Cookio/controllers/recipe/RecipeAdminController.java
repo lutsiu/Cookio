@@ -29,12 +29,6 @@ public class RecipeAdminController {
     public RecipeAdminController(RecipeService recipeService) {
         this.recipeService = recipeService;
     }
-
-    /*@PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<RecipeDTOWithUsers> createRecipe(@ModelAttribute Recipe recipe) {
-        RecipeDTOWithUsers savedRecipe = recipeService.createRecipe(recipe);
-        return ResponseEntity.ok(savedRecipe);
-    }*/
     @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<RecipeDTOWithUsers> createRecipe(
             @RequestPart("recipe") String recipeJson,
@@ -49,20 +43,19 @@ public class RecipeAdminController {
     }
 
 
-    /*{
-  "title": "Aperol Spritz",
-  "ingredients": [
-    {"id": 108},  // Olive Oil
-    {"id": 109} // Onion
-  ],
-  "description": "A popular Italian aperitif typically served as a cocktail with Prosecco, soda water, and a slice of orange.",
-  "instructions": "A citrusy and bittersweet flavored liqueur made from gentian root, bitter orange peel, and herbs.",
-  "image": "file",
-  "author": {"id": 27},
+    /*
+{
+  "title": "Prosecco",
+  "description": "Just prosecco",
+  "instructions": "Bla blha blah ",
   "prepTime": 5,
   "cookTime": 0,
   "servings": 2,
   "category": "Beverage",
+  "ingredients": [
+    {"id": 109}
+  ],
+  "author": {"id": 27},
   "type": {"id": 11},
   "cuisine": {"id": 4}
 }
