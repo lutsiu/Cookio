@@ -69,6 +69,14 @@ public class UserServiceImpl implements UserService {
     public Optional<UserDTO> updateUser(int userId, User updatedUser) {
         return userDAO.findById(userId)
                 .map(existingUser -> {
+                    // check if user updates email and if so, check whether
+                    // updated email is already being user by another user
+                    String updatedEmail = updatedUser.getEmail();
+                    String previousEmail = existingUser.getEmail();
+                    if (!Objects.equals(previousEmail, updatedEmail)
+                            && userDAO.existsByEmail(updatedEmail)) {
+                        throw new EmailAlreadyUsedException(updatedEmail);
+                    }
                     existingUser.setFirstName(updatedUser.getFirstName());
                     existingUser.setLastName(updatedUser.getLastName());
                     existingUser.setEmail(updatedUser.getEmail());

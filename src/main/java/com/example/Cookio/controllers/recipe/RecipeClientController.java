@@ -24,7 +24,7 @@ public class RecipeClientController {
         this.recipeService = recipeService;
     }
 
-    @GetMapping()
+    @GetMapping
     public ResponseEntity<List<RecipeDTONoUser>> getAllRecipes(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
@@ -34,55 +34,55 @@ public class RecipeClientController {
 
     // Endpoint to get a recipe by ID +
     @GetMapping("/{id}")
-    public ResponseEntity<RecipeDTOWithUsers> getRecipeById(@PathVariable int id) {
-        Optional<RecipeDTOWithUsers> recipe = recipeService.getRecipeById(id);
+    public ResponseEntity<RecipeDTONoUser> getRecipeById(@PathVariable int id) {
+        Optional<RecipeDTONoUser> recipe = recipeService.getRecipeById(id);
         return recipe.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     // Endpoint to search recipes by title +
     @GetMapping("/search/title")
-    public ResponseEntity<List<RecipeDTOWithUsers>> findRecipesByTitle(@RequestParam String title) {
-        List<RecipeDTOWithUsers> recipes = recipeService.findRecipesByTitle(title);
+    public ResponseEntity<List<RecipeDTONoUser>> findRecipesByTitle(@RequestParam String title) {
+        List<RecipeDTONoUser> recipes = recipeService.findRecipesByTitle(title);
         return ResponseEntity.ok(recipes);
     }
 
     // Endpoint to search recipes by description +
     @GetMapping("/search/description")
-    public ResponseEntity<List<RecipeDTOWithUsers>> findRecipesByDescription(@RequestParam String description) {
-        List<RecipeDTOWithUsers> recipes = recipeService.findRecipesByDescription(description);
+    public ResponseEntity<List<RecipeDTONoUser>> findRecipesByDescription(@RequestParam String description) {
+        List<RecipeDTONoUser> recipes = recipeService.findRecipesByDescription(description);
         return ResponseEntity.ok(recipes);
     }
 
     // Endpoint to search recipes by ingredients -
     @GetMapping("/search/ingredients")
-    public ResponseEntity<List<RecipeDTOWithUsers>> findRecipesByIngredients(@RequestParam String ingredients) {
-        List<RecipeDTOWithUsers> recipes = recipeService.findRecipesByIngredients(ingredients);
+    public ResponseEntity<List<RecipeDTONoUser>> findRecipesByIngredients(@RequestParam String ingredients) {
+        List<RecipeDTONoUser> recipes = recipeService.findRecipesByIngredients(ingredients);
         return ResponseEntity.ok(recipes);
     }
     @GetMapping("/author/{authorId}")
-    public ResponseEntity<List<RecipeDTOWithUsers>> findRecipesByAuthor(@PathVariable int authorId) {
-        List<RecipeDTOWithUsers> recipes = recipeService.findRecipesByAuthorId(authorId);
+    public ResponseEntity<List<RecipeDTONoUser>> findRecipesByAuthor(@PathVariable int authorId) {
+        List<RecipeDTONoUser> recipes = recipeService.findRecipesByAuthorId(authorId);
         return ResponseEntity.ok(recipes);
     }
 
     // +
     @GetMapping("/search/category")
-    public ResponseEntity<List<RecipeDTOWithUsers>> findRecipesByCategory(@RequestParam String category) {
-        List<RecipeDTOWithUsers> recipes = recipeService.findRecipesByCategory(category);
+    public ResponseEntity<List<RecipeDTONoUser>> findRecipesByCategory(@RequestParam String category) {
+        List<RecipeDTONoUser> recipes = recipeService.findRecipesByCategory(category);
         return ResponseEntity.ok(recipes);
     }
 
     // Find recipes by type +
     @GetMapping("/search/type/{typeId}")
-    public ResponseEntity<List<RecipeDTOWithUsers>> findRecipesByType(@PathVariable int typeId) {
-        List<RecipeDTOWithUsers> recipes = recipeService.findRecipesByType(typeId);
+    public ResponseEntity<List<RecipeDTONoUser>> findRecipesByType(@PathVariable int typeId) {
+        List<RecipeDTONoUser> recipes = recipeService.findRecipesByType(typeId);
         return ResponseEntity.ok(recipes);
     }
 
     // Find recipes by cuisine +
     @GetMapping("/search/cuisine/{cuisineId}")
-    public ResponseEntity<List<RecipeDTOWithUsers>> findRecipesByCuisine(@PathVariable int cuisineId) {
-        List<RecipeDTOWithUsers> recipes = recipeService.findRecipesByCuisine(cuisineId);
+    public ResponseEntity<List<RecipeDTONoUser>> findRecipesByCuisine(@PathVariable int cuisineId) {
+        List<RecipeDTONoUser> recipes = recipeService.findRecipesByCuisine(cuisineId);
         return ResponseEntity.ok(recipes);
     }
 

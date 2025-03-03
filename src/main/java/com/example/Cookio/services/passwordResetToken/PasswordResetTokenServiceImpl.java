@@ -51,7 +51,7 @@ public class PasswordResetTokenServiceImpl implements PasswordResetTokenService 
         passwordResetTokenDAO.save(resetToken);
 
         // Send the reset email
-        String resetLink = "http://localhost:8080/api/password-reset/verify-token?token=" + resetToken.getToken();
+        String resetLink = "http://localhost:8080/password-reset/verify-token?token=" + resetToken.getToken();
         emailService.sendEmail(user.getEmail(), "Password Reset",
                 "Click the link to reset your password: " + resetLink);
     }

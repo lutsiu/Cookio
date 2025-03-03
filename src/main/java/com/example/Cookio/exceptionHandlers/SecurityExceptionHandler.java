@@ -5,10 +5,13 @@ import com.example.Cookio.exceptions.jwt.InvalidIssuerException;
 import com.example.Cookio.exceptions.jwt.InvalidTokenException;
 import com.example.Cookio.exceptions.security.JwtAuthenticationException;
 import com.example.Cookio.utils.ErrorResponse;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -19,6 +22,8 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import javax.security.sasl.AuthenticationException;
 import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @ControllerAdvice
@@ -95,5 +100,44 @@ public class SecurityExceptionHandler {
                 LocalDateTime.now()
         );
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ErrorResponse> handleConstraintViolationException(ConstraintViolationException ex) {
+        // Extract only the interpolated messages
+        List<String> errorMessages = ex.getConstraintViolations().stream()
+                .map(ConstraintViolation::getMessage) // Extracts only the interpolated message
+                .collect(Collectors.toList());
+
+        // Join messages if there are multiple violations
+        String message = String.join(", ", errorMessages);
+
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.CONFLICT.value(),
+                message,  // Use extracted message
+                LocalDateTime.now()
+        );
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponse> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
+        String message = "A data integrity error occurred. Please check your input.";
+
+        if (ex.getRootCause() != null) {
+            String detailedMessage = ex.getRootCause().getMessage();
+            if (detailedMessage.contains("Duplicate entry")) {
+                message = "This value already exists. Please choose a different one.";
+            }
+        }
+
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.CONFLICT.value(),
+                message,
+                LocalDateTime.now()
+        );
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
     }
 }

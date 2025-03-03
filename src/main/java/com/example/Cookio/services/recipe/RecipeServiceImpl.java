@@ -93,16 +93,16 @@ public class RecipeServiceImpl implements RecipeService {
 
 
     @Override
-    public Optional<RecipeDTOWithUsers> getRecipeById(int id) {
+    public Optional<RecipeDTONoUser> getRecipeById(int id) {
         return recipeDAO.findById(id)
-                .map(RecipeDTOWithUsers::fromRecipe)
+                .map(RecipeDTONoUser::fromRecipe)
                 .or(() -> {
                     throw new RecipeNotFoundException("Recipe not found with id: " + id);
                 });
     }
 
     @Override
-    public Optional<RecipeDTOWithUsers> updateRecipe(int id, Recipe updatedRecipe, MultipartFile image) {
+    public Optional<RecipeDTONoUser> updateRecipe(int id, Recipe updatedRecipe, MultipartFile image) {
         return Optional.ofNullable(recipeDAO.findById(id).map(existingRecipe -> {
             // Validate the updated recipe
             validateRecipe(updatedRecipe);
@@ -126,7 +126,7 @@ public class RecipeServiceImpl implements RecipeService {
 
             // Save the updated recipe
             Recipe savedRecipe = recipeDAO.save(existingRecipe);
-            return RecipeDTOWithUsers.fromRecipe(savedRecipe);
+            return RecipeDTONoUser.fromRecipe(savedRecipe);
         }).orElseThrow(() -> new RecipeNotFoundException("Recipe not found with id: " + id)));
     }
 
@@ -141,45 +141,45 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public List<RecipeDTOWithUsers> findRecipesByTitle(String titleKeyword) {
+    public List<RecipeDTONoUser> findRecipesByTitle(String titleKeyword) {
         return recipeDAO.findByTitleContainingIgnoreCase(titleKeyword)
-                .stream().map(RecipeDTOWithUsers::fromRecipe).collect(Collectors.toList());
+                .stream().map(RecipeDTONoUser::fromRecipe).collect(Collectors.toList());
     }
 
     @Override
-    public List<RecipeDTOWithUsers> findRecipesByDescription(String descriptionKeyword) {
+    public List<RecipeDTONoUser> findRecipesByDescription(String descriptionKeyword) {
         return recipeDAO.findByDescriptionContainingIgnoreCase(descriptionKeyword)
-                .stream().map(RecipeDTOWithUsers::fromRecipe).collect(Collectors.toList());
+                .stream().map(RecipeDTONoUser::fromRecipe).collect(Collectors.toList());
     }
 
     @Override
-    public List<RecipeDTOWithUsers> findRecipesByIngredients(String ingredientsKeyword) {
+    public List<RecipeDTONoUser> findRecipesByIngredients(String ingredientsKeyword) {
         return recipeDAO.findByIngredientsContainingIgnoreCase(ingredientsKeyword)
-                .stream().map(RecipeDTOWithUsers::fromRecipe).collect(Collectors.toList());
+                .stream().map(RecipeDTONoUser::fromRecipe).collect(Collectors.toList());
     }
 
     @Override
-    public List<RecipeDTOWithUsers> findRecipesByAuthorId(int authorId) {
+    public List<RecipeDTONoUser> findRecipesByAuthorId(int authorId) {
         return recipeDAO.findByAuthorId(authorId)
-                .stream().map(RecipeDTOWithUsers::fromRecipe).collect(Collectors.toList());
+                .stream().map(RecipeDTONoUser::fromRecipe).collect(Collectors.toList());
     }
 
     @Override
-    public List<RecipeDTOWithUsers> findRecipesByCategory(String category) {
+    public List<RecipeDTONoUser> findRecipesByCategory(String category) {
         return recipeDAO.findByCategoryContainingIgnoreCase(category)
-                .stream().map(RecipeDTOWithUsers::fromRecipe).collect(Collectors.toList());
+                .stream().map(RecipeDTONoUser::fromRecipe).collect(Collectors.toList());
     }
 
     @Override
-    public List<RecipeDTOWithUsers> findRecipesByType(int typeId) {
+    public List<RecipeDTONoUser> findRecipesByType(int typeId) {
         return recipeDAO.findByTypeId(typeId)
-                .stream().map(RecipeDTOWithUsers::fromRecipe).collect(Collectors.toList());
+                .stream().map(RecipeDTONoUser::fromRecipe).collect(Collectors.toList());
     }
 
     @Override
-    public List<RecipeDTOWithUsers> findRecipesByCuisine(int cuisineId) {
+    public List<RecipeDTONoUser> findRecipesByCuisine(int cuisineId) {
         return recipeDAO.findByCuisineId(cuisineId)
-                .stream().map(RecipeDTOWithUsers::fromRecipe).collect(Collectors.toList());
+                .stream().map(RecipeDTONoUser::fromRecipe).collect(Collectors.toList());
     }
 
     @Override

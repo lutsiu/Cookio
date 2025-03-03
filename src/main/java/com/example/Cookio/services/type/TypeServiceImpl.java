@@ -1,6 +1,7 @@
 package com.example.Cookio.services.type;
 
 import com.example.Cookio.dao.type.TypeDAO;
+import com.example.Cookio.exceptions.cuisine.CuisineAlreadyExistsException;
 import com.example.Cookio.exceptions.type.TypeAlreadyExistsException;
 import com.example.Cookio.exceptions.type.TypeNotFoundException;
 import com.example.Cookio.models.Type;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -54,6 +56,15 @@ public class TypeServiceImpl implements TypeService {
     @Override
     public Optional<Type> updateType(int typeId, Type updatedType) {
         return Optional.ofNullable(dao.findById(typeId).map(existingCuisine -> {
+            String currentName = existingCuisine.getName();;
+            String updatedName = updatedType.getName();
+
+            // means we want to change name to the name of cuisine that exists
+            if (!Objects.equals(currentName, updatedName) && dao.existsByName(updatedName)) {
+
+                throw new CuisineAlreadyExistsException(updatedName);
+            }
+
             existingCuisine.setName(updatedType.getName());
             existingCuisine.setDescription(updatedType.getDescription());
             return dao.save(existingCuisine);

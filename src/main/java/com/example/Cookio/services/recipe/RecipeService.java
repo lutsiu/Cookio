@@ -18,30 +18,30 @@ public interface RecipeService {
     RecipeDTOWithUsers createRecipe(Recipe recipe, MultipartFile image);
 
     // Retrieve a recipe by ID
-    Optional<RecipeDTOWithUsers> getRecipeById(int id);
+    Optional<RecipeDTONoUser> getRecipeById(int id);
 
     // Update an existing recipe
-    Optional<RecipeDTOWithUsers> updateRecipe(int id, Recipe updatedRecipe, MultipartFile image);
+    Optional<RecipeDTONoUser> updateRecipe(int id, Recipe updatedRecipe, MultipartFile image);
 
     // Delete a recipe by ID
     boolean deleteRecipe(int id);
 
     // Find recipes by title with partial match
-    List<RecipeDTOWithUsers> findRecipesByTitle(String titleKeyword);
+    List<RecipeDTONoUser> findRecipesByTitle(String titleKeyword);
 
     // Find recipes by description with partial match
-    List<RecipeDTOWithUsers> findRecipesByDescription(String descriptionKeyword);
+    List<RecipeDTONoUser> findRecipesByDescription(String descriptionKeyword);
 
     // Find recipes by ingredients with partial match
-    List<RecipeDTOWithUsers> findRecipesByIngredients(String ingredientsKeyword);
+    List<RecipeDTONoUser> findRecipesByIngredients(String ingredientsKeyword);
 
     // Find recipes by author ID
-    List<RecipeDTOWithUsers> findRecipesByAuthorId(int authorId);
+    List<RecipeDTONoUser> findRecipesByAuthorId(int authorId);
 
     // Additional filtering (category, type, cuisine, etc.)
-    List<RecipeDTOWithUsers> findRecipesByCategory(String category);
-    List<RecipeDTOWithUsers> findRecipesByType(int typeId);
-    List<RecipeDTOWithUsers> findRecipesByCuisine(int cuisineId);
+    List<RecipeDTONoUser> findRecipesByCategory(String category);
+    List<RecipeDTONoUser> findRecipesByType(int typeId);
+    List<RecipeDTONoUser> findRecipesByCuisine(int cuisineId);
 
     // Retrieve all recipes (with optional pagination)
     List<RecipeDTOWithUsers> getAllRecipes(int page, int size);

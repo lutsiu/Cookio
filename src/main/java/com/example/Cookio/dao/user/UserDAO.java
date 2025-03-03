@@ -17,7 +17,7 @@ public interface UserDAO extends JpaRepository<User, Integer> {
     Optional<User> findByVerificationToken(String verificationToken);
     boolean existsByEmail(String email);
 
-    @Query("SELECT u FROM User u WHERE u.firstName = ?1 AND u.lastName = ?2")
+    @Query("SELECT u FROM User u WHERE u.firstName = ?1 OR u.lastName = ?2")
     List<User> findByFirstNameAndLastName(String firstName, String lastName);
 
 

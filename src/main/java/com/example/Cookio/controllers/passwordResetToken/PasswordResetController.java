@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequestMapping("/api/client/password-reset")
+@RequestMapping("/password-reset")
 // UNTESTED
 public class PasswordResetController {
 
@@ -20,7 +20,6 @@ public class PasswordResetController {
 
     // Step 1: User requests password reset (generates a token and sends the reset email)
     @PostMapping("/request")
-    @PreAuthorize("hasRole('ADMIN') or #email == authentication.principal.email")
     public ResponseEntity<String> requestPasswordReset(@RequestParam @Email @NotBlank String email) {
         passwordResetService.generateResetToken(email);
         return ResponseEntity.ok("Password reset email sent successfully.");
@@ -29,16 +28,17 @@ public class PasswordResetController {
 
     // Step 2: User clicks the link to verify the token and then proceeds to reset password
     @GetMapping("/verify-token")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     public ResponseEntity<String> verifyResetToken(@RequestParam @NotBlank String token) {
         passwordResetService.verifyToken(token);
+
+        // when you connect backend with frontend, you can instead redirect user to change-password form
         return ResponseEntity.ok("Token is valid. You can now reset your password.");
+
 
     }
 
     // Step 3: User submits a new password with a valid token to reset the password
     @PostMapping("/reset")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     public ResponseEntity<String> resetPassword(@RequestParam @NotBlank String token,
                                                 @RequestParam @NotBlank String newPassword) {
         passwordResetService.resetPassword(token, newPassword);

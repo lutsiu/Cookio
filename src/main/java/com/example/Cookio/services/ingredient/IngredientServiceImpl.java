@@ -54,7 +54,7 @@ public class IngredientServiceImpl implements IngredientService {
 
     @Override
     public List<Ingredient> findIngredientsByCaloriesRange(int minCalories, int maxCalories) {
-        if (minCalories <= 0 || maxCalories <= 0) {
+        if (minCalories < 0 || maxCalories < 0) {
             throw new CaloriesAmountException("Calories must be greater than 0, regardless of the unit used.");
         }
         if (minCalories > maxCalories) {

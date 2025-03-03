@@ -1,6 +1,7 @@
 package com.example.Cookio.controllers.recipe;
 
 
+import com.example.Cookio.dto.recipe.RecipeDTONoUser;
 import com.example.Cookio.dto.recipe.RecipeDTOWithUsers;
 import com.example.Cookio.models.Recipe;
 import com.example.Cookio.services.recipe.RecipeService;
@@ -62,7 +63,7 @@ public class RecipeAdminController {
 */
 
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<RecipeDTOWithUsers> updateRecipe(
+    public ResponseEntity<RecipeDTONoUser> updateRecipe(
             @PathVariable int id,
             @RequestPart("recipe") String recipeJson,
             @RequestPart(value = "image", required = false) MultipartFile image) throws JsonProcessingException {
@@ -70,7 +71,7 @@ public class RecipeAdminController {
         ObjectMapper objectMapper = new ObjectMapper();
         Recipe recipe = objectMapper.readValue(recipeJson, Recipe.class);
 
-        Optional<RecipeDTOWithUsers> updatedRecipe = recipeService.updateRecipe(id, recipe, image);
+        Optional<RecipeDTONoUser> updatedRecipe = recipeService.updateRecipe(id, recipe, image);
         return updatedRecipe.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 

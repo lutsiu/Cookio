@@ -4,14 +4,19 @@ import com.example.Cookio.exceptions.ingredient.CaloriesAmountException;
 import com.example.Cookio.exceptions.ingredient.IngredientAlreadyExistsException;
 import com.example.Cookio.exceptions.ingredient.IngredientNotFoundException;
 import com.example.Cookio.utils.ErrorResponse;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @ControllerAdvice
 @Order(Ordered.HIGHEST_PRECEDENCE)
@@ -44,4 +49,11 @@ public class IngredientsExceptionHandler {
         );
         return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
     }
+
+
+
+
+
+
+
 }

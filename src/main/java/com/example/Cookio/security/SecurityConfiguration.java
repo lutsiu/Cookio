@@ -48,7 +48,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(auth -> auth
 
                         // public endpoints
-                        .requestMatchers("/auth/**", "/oauth2/**")
+                        .requestMatchers("/auth/**", "/oauth2/**", "/password-reset/**")
                         .permitAll()
 
                         // endpoints accessible by authenticated users
