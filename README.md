@@ -8,6 +8,7 @@ Cookio is a dynamic and feature-rich web application built on Spring Boot design
 - [Environment Variables](#environment-variables)
 - [API Documentation](#api-documentation)
 - [Contact](#contact)
+- [Tutorial](#tutorial)
 
 ## Features
 
@@ -159,6 +160,28 @@ If you encounter any issues or have questions, feel free to reach out:
 
 - **Email**: oleksandrlutsiuk2004@example.com  
 - **Linkedin**: www.linkedin.com/in/oleksandr-lutsiuk-881377354
+
+
+
+
+## 🎥 Tutorials
+
+https://github.com/user-attachments/assets/5f4db76e-4693-4e16-a3da-d5d226de0ab1
+
+https://github.com/user-attachments/assets/1e354f99-9fa3-48f0-8196-06e61f754d66
+
+https://github.com/user-attachments/assets/1a2fea66-49f7-46e9-b9ac-4ff828d263e5
+
+https://github.com/user-attachments/assets/e36bdef9-65fd-421c-88c6-68258e1955cf
+
+https://github.com/user-attachments/assets/3a0cbb6b-9e57-412a-bc6d-54c76dbae9ad
+
+https://github.com/user-attachments/assets/1b8e2b71-bcf8-4370-843d-901f6b888b5b
+
+https://github.com/user-attachments/assets/cf22ee27-70f6-48a2-92cf-2934ab9d1e7d
+
+https://github.com/user-attachments/assets/3d55d852-cabe-4c99-93bc-9c8bf822418e
+
 
 
 
