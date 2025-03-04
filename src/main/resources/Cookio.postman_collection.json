@@ -1,0 +1,4179 @@
+{
+	"info": {
+		"_postman_id": "cc7c4167-bdcf-4f5f-a1ec-bcad8e78fdbf",
+		"name": "Cookio",
+		"description": "# **Cookio Project**\n\nCookio is a dynamic and feature-rich web application designed to cater to both regular users and administrators. It provides a seamless experience for managing user accounts, recipes, and related data with a focus on security, functionality, and ease of use. Below are the key features and functionalities of Cookio:\n\n### **Account Management**\n\n- **User Registration**: Easily register for a Cookio account to start accessing the platform’s features.\n    \n- **Login & JWT Authentication**: Secure login system with JWT (JSON Web Token) authentication. After logging in, the JWT token is generated and saved as a variable in Postman for subsequent requests. Without the JWT token, users cannot access or perform actions within the platform.\n    \n- **OAuth Login**: In addition to the traditional login method, users can also log in using GitHub via OAuth for faster and more secure authentication.\n    \n- **Password Reset**: Forgot your password? No problem! Cookio allows you to reset your password and regain access to your account.\n    \n\n### **Client Features**\n\n- **View and Manage Profile**: As a client, you can view your profile information, update your details, and change your password whenever needed.\n    \n- **Recipe Access**: Access a wide range of recipes, filterable by cuisine, type, ingredients, author, and more. Find exactly what you're looking for in just a few clicks.\n    \n\n### **Admin Features**\n\n- **User Management**: Administrators can view all registered users, search users by name, and delete users as necessary, allowing for effective management of the platform's user base.\n    \n- **Recipe Management**: Admins have full control over the recipe database. They can add new recipes, upload recipe images (which are stored securely in the cloud), and update or delete existing recipes as required.\n    \n- **Cuisine and Type Management**: Admins can also manage cuisines, recipe types, and other categories to keep the platform organized and up to date.\n    \n\n### **Security & Authentication**\n\nCookio ensures that all operations require proper authentication via JWT tokens, guaranteeing the security of user data and preventing unauthorized actions. Both regular users and admins must authenticate to access specific features based on their roles.\n\n### **Cloud Integration**\n\nImages associated with recipes are securely stored in the cloud, ensuring that the application maintains a lightweight architecture while supporting rich media content.\n\nIn summary, Cookio is a powerful, secure, and user-friendly application that offers a comprehensive platform for managing users, recipes, and related data, while giving admins the tools they need to maintain control over the system.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "42550037"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const jtwToken = pm.response.json().jwt;\r",
+									"\r",
+									"pm.collectionVariables.set(\"jwtToken\", jtwToken);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"let jwtToken = pm.collectionVariables.get(\"jwtToken\");\r",
+									"\r",
+									"console.log(jwtToken)\r",
+									"if (jwtToken) {\r",
+									"    jwtToken = null;\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						},
+						"description": "### Auth Login\n\nTo log in, send a POST request to `{{baseUrl}}/auth/login` with the following payload in the raw request body type:\n\n``` json\n{\n  \"email\": \"your-email@example.com\",\n  \"password\": \"your-password\"\n}\n\n ```\n\n#### Request Body\n\n- `email` (string): Your email address\n    \n- `password` (string): Your password\n    \n\nIf the provided credentials are correct, a JWT token will be returned in the response, which will be automatically saved as a variable in Postman.\n\n#### Response\n\nThe response will be a JSON object with the following schema:\n\n``` json\n{\n  \"token\": \"jwt-token\"\n}\n\n ```"
+					},
+					"response": [
+						{
+							"name": "Successful Login to Admin",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\": \"cookio_adm1n@yahoo.com\",\r\n    \"password\": \"Bobr123!\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/auth/login",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"auth",
+										"login"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						},
+						{
+							"name": "Successful Login to Client Account",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\": \"cookiouser@yahoo.com\",\r\n    \"password\": \"Bobr123!\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/login",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"login"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						},
+						{
+							"name": "Unauthorized (incorrect email or password ))",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\": \"cookiouser@yahoo.com\",\r\n    \"password\": \"Bobr1234!\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/login",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"login"
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "Text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				},
+				{
+					"name": "Register",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const user = pm.response;\r",
+									"\r",
+									"console.log(user);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						},
+						"description": "### Register User\n\nThis endpoint allows you to register a new user.\n\n#### Request Body\n\n- `firstName` (string): The first name of the user.\n    \n- `lastName` (string): The last name of the user.\n    \n- `email` (string): The email address of the user.\n    \n- `role` (string): The role of the user, either \"user\" or \"admin\".\n    \n- `password` (string): The password for the user account.\n    \n\n#### Response\n\nAfter sending the request, if everything is successful, a confirmation email will be sent to the provided email address. Only after confirming the account via the email, the user will be able to login. Otherwise, login will not be possible."
+					},
+					"response": [
+						{
+							"name": "Successful sign-up",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"firstName\": \"Jan\",\r\n    \"lastName\": \"Kowalski\",\r\n    \"email\": \"enter your email\",\r\n    \"role\": \"user\",\r\n    \"password\": \"enter your password\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/auth/register",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"auth",
+										"register"
+									]
+								}
+							},
+							"_postman_previewlanguage": "Text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						},
+						{
+							"name": "Register",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"firstName\": \"Jan\",\r\n    \"lastName\": \"Kowalski\",\r\n    \"email\": \"enter your email\",\r\n    \"role\": \"user\",\r\n    \"password\": \"pas\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/register",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"register"
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "Text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						},
+						{
+							"name": "Email is already used",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"firstName\": \"Jan\",\r\n    \"lastName\": \"Kowalski\",\r\n    \"email\": \"yasv229@gmail.com\",\r\n    \"role\": \"user\",\r\n    \"password\": \"Bobr123!\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/register",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"register"
+									]
+								}
+							},
+							"_postman_previewlanguage": "Text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				}
+			],
+			"description": "This is folder designed for necessary steps with authorization  \nHere you can sign-up (register) and sign-in (login)"
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Admin",
+					"item": [
+						{
+							"name": "Get All Users",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{jwtToken}}",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/{{apiAdmin}}/users",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"{{apiAdmin}}",
+										"users"
+									]
+								},
+								"description": "This request allows us to retrieve a list of all users in the app. To access this endpoint, the user needs to be logged in as an admin. The response will contain a list of users.\n\nThis endpoint retrieves all users of the app.\n\n#### Request\n\n- Method: `GET`\n    \n- URL: `{{baseUrl}}/{{apiAdmin}}/users`\n    \n\n#### Response\n\nThe response will be a JSON object with the list of users"
+							},
+							"response": [
+								{
+									"name": "Retrieve all users (log in as an admin)",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{jwtToken}}",
+												"type": "text",
+												"disabled": true
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/{{apiAdmin}}/users",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"{{apiAdmin}}",
+												"users"
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						},
+						{
+							"name": "Delete User",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{jwtToken}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/{{apiAdmin}}/users/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"{{apiAdmin}}",
+										"users",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								},
+								"description": "### Delete User\n\nThis endpoint is used to delete a user and requires admin privileges.\n\n#### Request Body\n\nThis request does not require a request body.\n\n#### Path Parameters\n\n- `id` (string, required): The unique identifier of the user to be deleted.\n    \n\n#### Response\n\nThe response will not contain a response body. A successful deletion will return a status code of 204 (No Content).\n\n_Note: To access this endpoint, you need to be logged in as an admin and provide the ID of the user to be deleted in the request URL._"
+							},
+							"response": [
+								{
+									"name": "Delete User",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer ",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "http://localhost:8080/api/admin/users/:id",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"api",
+												"admin",
+												"users",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "33"
+												}
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Failed removal of user (log in as an admin)",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{jwtToken}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/{{apiAdmin}}/users/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"{{apiAdmin}}",
+												"users",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "32"
+												}
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						},
+						{
+							"name": "Get User by Name",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{jwtToken}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/{{apiAdmin}}/users/name",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"{{apiAdmin}}",
+										"users",
+										"name"
+									],
+									"query": [
+										{
+											"key": "firstName",
+											"value": "Krzysztof",
+											"disabled": true
+										},
+										{
+											"key": "lastName",
+											"value": "Kowalski",
+											"disabled": true
+										}
+									]
+								},
+								"description": "This request allows the admin to retrieve data of all users with the specified first name and last name. It is an HTTP GET request to `{{baseUrl}}/{{apiAdmin}}/users/name`, and it requires the following obligatory query parameters:\n\n- `firstName`: The first name of the user.\n    \n- `lastName`: The last name of the user.\n    \n\nThis endpoint retrieves a user by their first and last name."
+							},
+							"response": [
+								{
+									"name": "Extract all users with certain name",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{jwtToken}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/{{apiAdmin}}/users/name?firstName=Krzysztof&lastName=Kowalski",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"{{apiAdmin}}",
+												"users",
+												"name"
+											],
+											"query": [
+												{
+													"key": "firstName",
+													"value": "Krzysztof"
+												},
+												{
+													"key": "lastName",
+													"value": "Kowalski"
+												}
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						}
+					],
+					"description": "Folder with admin requests",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Client",
+					"item": [
+						{
+							"name": "Get User",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{jwtToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/{{apiClient}}/users/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"{{apiClient}}",
+										"users",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								},
+								"description": "### Get User by ID\n\nThis endpoint retrieves a user's information based on the provided user ID.  \n  \nIn order to use this request, you need to be logged in and have JWT-token.\n\n#### Request\n\n- Method: `GET`\n    \n- URL: `{{baseUrl}}/{{apiClient}}/users/:id`\n    \n\n#### Response\n\nThe response will include the user's details such as name, email, and other relevant information."
+							},
+							"response": [
+								{
+									"name": "Successful extraction of info",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer ",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "http://localhost:8080/api/client/users/:id",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"api",
+												"client",
+												"users",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "27"
+												}
+											]
+										}
+									},
+									"code": 200,
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "User not found",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{jwtToken}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/{{apiClient}}/users/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"{{apiClient}}",
+												"users",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "20"
+												}
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						},
+						{
+							"name": "Change User Data",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{jwtToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/{{apiClient}}/users/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"{{apiClient}}",
+										"users",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								},
+								"description": "The HTTP PUT request is used to update user data by specifying the user ID in the endpoint URL. This request is typically used to modify user details after registration. This endpoint is used to update the data of a specific user.  \n  \nIn order to use this request, you need to be logged in and have JWT-token.\n\n#### Request Body\n\nThe request body for this endpoint is the same as the **Register request** in the Auth folder. It contains the necessary data to update the user's information. The request body should include the following parameters:\n\n- `firstName`: string\n    \n- `lastName`: string\n    \n- `email`: string\n    \n- `role`: string\n    \n- `password`: string\n    \n\n#### Response\n\nThe response will include the updated user data if the request is successful.\n\nThis request is typically used to modify user details after registration.\n\nThis endpoint is used to update the data of a specific user.\n\n#### Response\n\nThe response will include the updated user data if the request is successful."
+							},
+							"response": [
+								{
+									"name": "Change User Data",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer ",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"firstName\": \"Jacek2\",\r\n    \"lastName\": \"Kowalski\",\r\n    \"email\": \"yasv229@gmail.com\",\r\n    \"role\": \"admin\",\r\n    \"password\": \"Bobr123!\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:8080/api/client/users/:id",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"api",
+												"client",
+												"users",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "27"
+												}
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Failled data change if logged in as a user (admin email)",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer ",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"firstName\": \"Jacek\",\r\n    \"lastName\": \"Kowalski\",\r\n    \"email\": \"yasv229@gmail.com\",\r\n    \"role\": \"user\",\r\n    \"password\": \"Bobr123!\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:8080/api/client/users/:id",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"api",
+												"client",
+												"users",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "33"
+												}
+											]
+										}
+									},
+									"status": "Unauthorized",
+									"code": 401,
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						},
+						{
+							"name": "Update Password",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{jwtToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/{{apiClient}}/users/:id/change-password",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"{{apiClient}}",
+										"users",
+										":id",
+										"change-password"
+									],
+									"query": [
+										{
+											"key": "newPassword",
+											"value": "",
+											"disabled": true
+										}
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								},
+								"description": "### Change User Password\n\nThis API endpoint is used to change the password for a specific user.  \n  \nIn order to use this request, you need to be logged in and have JWT-token.\n\n#### Request\n\n- Method: `PATCH`\n    \n- URL: `{{baseUrl}}/{{apiClient}}/users/:id/change-password`\n    \n\n##### Path Parameters\n\n- `id`: The unique identifier of the user.\n    \n\n##### Query Parameters\n\n- `new_password`: The new password that meets all necessary requirements.\n    \n\n#### Response\n\nThe response (if positive) is simply a string that password was successfully changed."
+							},
+							"response": [
+								{
+									"name": "Successful pasword change (include the id of account you've logged in with)",
+									"originalRequest": {
+										"method": "PATCH",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer ",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:8080/api/client/users/:id/change-password?newPassword=NewPas123!",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"api",
+												"client",
+												"users",
+												":id",
+												"change-password"
+											],
+											"query": [
+												{
+													"key": "newPassword",
+													"value": "NewPas123!"
+												}
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "33"
+												}
+											]
+										}
+									},
+									"code": 200,
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Access denied (wrong id)",
+									"originalRequest": {
+										"method": "PATCH",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer ",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:8080/api/client/users/:id/change-password?newPassword=Bobr123!",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"api",
+												"client",
+												"users",
+												":id",
+												"change-password"
+											],
+											"query": [
+												{
+													"key": "newPassword",
+													"value": "Bobr123!"
+												}
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "25"
+												}
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Weak password",
+									"originalRequest": {
+										"method": "PATCH",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:8080/api/client/users/:id/change-password?newPassword=weakpassword",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"api",
+												"client",
+												"users",
+												":id",
+												"change-password"
+											],
+											"query": [
+												{
+													"key": "newPassword",
+													"value": "weakpassword"
+												}
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "33"
+												}
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [
+										{}
+									],
+									"cookie": [
+										{
+											"expires": "Invalid Date"
+										}
+									],
+									"body": ""
+								}
+							]
+						}
+					],
+					"description": "Folder dedicated for client methods"
+				}
+			],
+			"description": "This is folder designed for method connected with User.  \nThis folder in turn has 2 subfolders: Admin and Client  \n  \nAdmin folder contains requests made and used by admin.  \nOnly if you sign-in as an admin, you'll be able to perform these requests  \n  \nClient folder contains requests made and user by client.",
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{jwtToken}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Reset Password",
+			"item": [
+				{
+					"name": "Step 1. Get reset token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/password-reset/request?email=javatest2024@gmail.com",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"password-reset",
+								"request"
+							],
+							"query": [
+								{
+									"key": "email",
+									"value": "javatest2024@gmail.com"
+								}
+							]
+						},
+						"description": "### Request\n\nThis is an HTTP POST request to `{{baseUrl}}/password-reset/request` endpoint to initiate the password reset process. The request includes the following query parameter:\n\n- `email`: The email address for which the password reset is requested.\n    \n\n### Request Body\n\nThe request does not include a request body.\n\n### Response\n\nIf the request is successful, you will receive an email containing a URL with a token for the next step in the password reset process."
+					},
+					"response": [
+						{
+							"name": "Successful token obtaining",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/password-reset/request?email=javatest2024@gmail.com",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"password-reset",
+										"request"
+									],
+									"query": [
+										{
+											"key": "email",
+											"value": "javatest2024@gmail.com"
+										}
+									]
+								}
+							},
+							"_postman_previewlanguage": "Text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						},
+						{
+							"name": "Provided email doesn't exist",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/password-reset/request?email=javatest2024@gmail.com",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"password-reset",
+										"request"
+									],
+									"query": [
+										{
+											"key": "email",
+											"value": "javatest2024@gmail.com"
+										}
+									]
+								}
+							},
+							"_postman_previewlanguage": "Text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				},
+				{
+					"name": "Step 2. Verify token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const token = pm.request.url.query.get(\"token\");\r",
+									"pm.collectionVariables.set(\"resetPasswordToken\", token);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/password-reset/verify-token",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"password-reset",
+								"verify-token"
+							],
+							"query": [
+								{
+									"key": "token",
+									"value": "c87267ce-6bbc-4224-93e2-c7f47fd5dc1d",
+									"disabled": true
+								}
+							]
+						},
+						"description": "### Request\n\nThis endpoint is used to verify a password reset token. It is a **GET** request sent to `{{baseUrl}}/password-reset/verify-token` with the `token` query parameter set to the password reset token.\n\n### Response\n\nThe response for this request is a string that confirms that token is valid and could be used."
+					},
+					"response": [
+						{
+							"name": "Example with token (add token from email, otherwise you'll get an error)",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/password-reset/verify-token?token=c87267ce-6bbc-4224-93e2-c7f47fd5dc1d",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"password-reset",
+										"verify-token"
+									],
+									"query": [
+										{
+											"key": "token",
+											"value": "c87267ce-6bbc-4224-93e2-c7f47fd5dc1d"
+										}
+									]
+								}
+							},
+							"_postman_previewlanguage": "Text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				},
+				{
+					"name": "Step 3. Set new password",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/password-reset/reset",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"password-reset",
+								"reset"
+							],
+							"query": [
+								{
+									"key": "token",
+									"value": "{{resetPasswordToken}}",
+									"disabled": true
+								},
+								{
+									"key": "newPassword",
+									"value": "Bobr123!",
+									"disabled": true
+								}
+							]
+						},
+						"description": "The HTTP POST request to reset the password requires the following parameters:\n\n- `token` (query parameter): The token provided for password reset.\n    \n- `newPassword` (query parameter): The new password to be set.\n    \n\nUpon successful execution, the response will be a string that will confirm that password was changed successfully."
+					},
+					"response": [
+						{
+							"name": "Example successful example",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/password-reset/reset?token={{resetPasswordToken}}&newPassword=Bobr123!",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"password-reset",
+										"reset"
+									],
+									"query": [
+										{
+											"key": "token",
+											"value": "{{resetPasswordToken}}"
+										},
+										{
+											"key": "newPassword",
+											"value": "Bobr123!"
+										}
+									]
+								}
+							},
+							"_postman_previewlanguage": "Text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				}
+			],
+			"description": "This is folder with requests to reset your password  \nThey include 3 steps:  \nStep 1.  \n1\\. In a url, you need to provide the email of existing user after query parameter email  \n2\\. After sending post request you will get the link with reset token on the email of existing user.  \nEmail link will look like: [http://localhost:8080/password-reset/verify-token?token=c87267ce-6bbc-4224-93e2-c7f47fd5dc1d](http://localhost:8080/password-reset/verify-token?token=c87267ce-6bbc-4224-93e2-c7f47fd5dc1d)  \nYou should copy the token part after equal sign and proceed to the step 2.\n\nStep 2.  \nVerify token, it will be saved as a variable, needed for step 3.\n\nStep 3.\n\nAdd a password that will meet standart requirements and change it."
+		},
+		{
+			"name": "Recipe",
+			"item": [
+				{
+					"name": "Admin",
+					"item": [
+						{
+							"name": "Create Recipe",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "image",
+											"type": "file",
+											"src": "/C:/Users/Sanya/Downloads/prosecco.jpg",
+											"disabled": true
+										},
+										{
+											"key": "recipe",
+											"value": "{\n  \n  \"description\": \"Just prosecco\",\n  \"instructions\": \"Bla blha blah \",\n  \"prepTime\": 5,\n  \"cookTime\": 0,\n  \"servings\": 2,\n  \"category\": \"Beverage\",\n  \"ingredients\": [\n    {\"id\": 109}\n  ],\n  \"author\": {\"id\": 27},\n  \"type\": {\"id\": 11},\n  \"cuisine\": {\"id\": 4}\n}",
+											"type": "text",
+											"disabled": true
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/{{apiAdmin}}/recipes/create",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"{{apiAdmin}}",
+										"recipes",
+										"create"
+									]
+								},
+								"description": "### **Description**\n\nThis endpoint allows an **admin** to add a new recipe to the system. Only users with admin privileges can use this method. Authentication as an admin is required.\n\n### **Request Format**\n\nThis request must be sent using **form-data** with the following keys:\n\n#### **1\\. Image**\n\n- **Key**: `image`\n    \n- **Type**: File\n    \n- **Description**: The image file representing the recipe.\n    \n\n#### **2\\. Recipe**\n\n- **Key**: `recipe`\n    \n- **Type**: JSON\n    \n- **Description**: A JSON object containing the details of the recipe.\n    \n\n#### **Recipe JSON Fields**\n\n``` json\n{\n    \"title\": \"Prosecco\",\n    \"description\": \"Just prosecco\",\n    \"instructions\": \"Bla blha blah\",\n    \"prepTime\": 5,\n    \"cookTime\": 0,\n    \"servings\": 2,\n    \"category\": \"Beverage\",\n    \"ingredients\": [\n        { \"id\": 109 }\n    ],\n    \"author\": { \"id\": 27 },\n    \"type\": { \"id\": 11 },\n    \"cuisine\": { \"id\": 4 }\n}\n\n ```\n\n### **Rules & Constraints**\n\n- **Only admin users** can create a recipe.\n    \n- The `author` field must contain the **admin's ID**.\n    \n- `ingredients`, `type`, and `cuisine` must be referenced by their respective IDs.\n    \n- All fields should be provided as specified.\n    \n\n### **Response**\n\nUpon success, the endpoint returns the created recipe object with an assigned `id` and `image` URL.\n\n#### **Response Example**\n\n``` json\n{\n    \"id\": 128,\n    \"title\": \"Processo 3.0\",\n    \"description\": \"Just prosecco\",\n    \"image\": \"http://res.cloudinary.com/cookio/image/upload/v1740825423/qw7px7lxkmkqitywigja.jpg\",\n    \"prepTime\": 5,\n    \"cookTime\": 0,\n    \"servings\": 2,\n    \"category\": \"Beverage\",\n    \"author\": {\n        \"id\": 27,\n        \"firstName\": null,\n        \"lastName\": null,\n        \"email\": null,\n        \"avatar\": null,\n        \"bio\": null,\n        \"verificationToken\": null,\n        \"recipes\": null,\n        \"emailVerified\": false\n    },\n    \"type\": {\n        \"id\": 11,\n        \"name\": null,\n        \"description\": null,\n        \"createdAt\": null,\n        \"updatedAt\": null\n    },\n    \"cuisine\": {\n        \"id\": 4,\n        \"name\": null,\n        \"description\": null,\n        \"createdAt\": null,\n        \"updatedAt\": null\n    },\n    \"users\": null,\n    \"ingredients\": [\n        {\n            \"id\": 109,\n            \"name\": null,\n            \"type\": null,\n            \"calories\": 0,\n            \"unit\": null,\n            \"createdAt\": null,\n            \"updatedAt\": null\n        }\n    ]\n}\n\n ```"
+							},
+							"response": [
+								{
+									"name": "Create Recipe",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "formdata",
+											"formdata": [
+												{
+													"key": "image",
+													"type": "file",
+													"src": "/C:/Users/Sanya/Downloads/prosecco.jpg"
+												},
+												{
+													"key": "recipe",
+													"value": "{\n  \"title\": \"Prosecco\",\n  \"description\": \"Just prosecco\",\n  \"instructions\": \"Bla blha blah \",\n  \"prepTime\": 5,\n  \"cookTime\": 0,\n  \"servings\": 2,\n  \"category\": \"Beverage\",\n  \"ingredients\": [\n    {\"id\": 109}\n  ],\n  \"author\": {\"id\": 27},\n  \"type\": {\"id\": 11},\n  \"cuisine\": {\"id\": 4}\n}",
+													"type": "text"
+												}
+											]
+										},
+										"url": {
+											"raw": "{{baseUrl}}/{{apiAdmin}}/recipes/create",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"{{apiAdmin}}",
+												"recipes",
+												"create"
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						},
+						{
+							"name": "Delete Recipe",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/{{apiAdmin}}/recipes/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"{{apiAdmin}}",
+										"recipes",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								},
+								"description": "### Delete Recipe by ID\n\nThis endpoint allows the admin to delete a recipe by its unique identifier.\n\n#### Request\n\n- Method: `DELETE`\n    \n- URL: `{{baseUrl}}/{{apiAdmin}}/recipes/:id`\n    \n\n#### Response\n\nThe response for this request is a JSON object conforming to the following schema:\n\n``` json\n{\n  \"type\": \"object\",\n  \"properties\": {\n    \"message\": {\n      \"type\": \"string\",\n      \"description\": \"A message confirming the deletion of the recipe\"\n    }\n  }\n}\n\n ```"
+							},
+							"response": [
+								{
+									"name": "Delete Recipe with a certain id",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/{{apiAdmin}}/recipes/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"{{apiAdmin}}",
+												"recipes",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "126"
+												}
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Failed removal of recipe (doesn't exist)",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/{{apiAdmin}}/recipes/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"{{apiAdmin}}",
+												"recipes",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "3333"
+												}
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						},
+						{
+							"name": "Change recipe",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "image",
+											"type": "file",
+											"src": [],
+											"disabled": true
+										},
+										{
+											"key": "recipe",
+											"value": "{\n  \"title\": \"Prosecco 2.0\" ,\n  \"description\": \"Just prosecco\",\n  \"instructions\": \"Bla blha blah \",\n  \"prepTime\": 5,\n  \"cookTime\": 0,\n  \"servings\": 2,\n  \"category\": \"Beverage\",\n  \"ingredients\": [\n    {\"id\": 109}\n  ],\n  \"author\": {\"id\": 27},\n  \"type\": {\"id\": 11},\n  \"cuisine\": {\"id\": 4}\n}",
+											"type": "text",
+											"disabled": true
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/{{apiAdmin}}/recipes/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"{{apiAdmin}}",
+										"recipes",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "126"
+										}
+									]
+								},
+								"description": "StartFragment\n\n# Change Recipe - API Documentation\n\n## Endpoint\n\n**PUT** `{{baseUrl}}/{{apiAdmin}}/recipes/:id`\n\n## Description\n\nThis endpoint allows an **admin** to update an existing recipe. Only users with admin privileges can access this method. The admin must be logged in to perform this action.\n\n## Path Variable\n\n- `id` (integer) - The ID of the recipe to be updated.\n    \n\n## Request Format\n\nThe request must use `form-data` with the following keys:\n\n1. **Image** (file) - The updated recipe image (optional).\n    \n2. **Recipe** (JSON) - The updated recipe details in JSON format.\n    \n\n## Response Format\n\nThe response returns the updated recipe object, following the same structure as the response for creating a recipe.\n\nEndFragment"
+							},
+							"response": [
+								{
+									"name": "Successful change of recipe",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "formdata",
+											"formdata": [
+												{
+													"key": "image",
+													"type": "file",
+													"src": []
+												},
+												{
+													"key": "recipe",
+													"value": "{\n  \"title\": \"Prosecco 2.0\" ,\n  \"description\": \"Just prosecco\",\n  \"instructions\": \"Bla blha blah \",\n  \"prepTime\": 5,\n  \"cookTime\": 0,\n  \"servings\": 2,\n  \"category\": \"Beverage\",\n  \"ingredients\": [\n    {\"id\": 109}\n  ],\n  \"author\": {\"id\": 27},\n  \"type\": {\"id\": 11},\n  \"cuisine\": {\"id\": 4}\n}",
+													"type": "text"
+												}
+											]
+										},
+										"url": {
+											"raw": "{{baseUrl}}/{{apiAdmin}}/recipes/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"{{apiAdmin}}",
+												"recipes",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "126"
+												}
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						}
+					],
+					"description": "Folder that contains admin requests"
+				},
+				{
+					"name": "Client",
+					"item": [
+						{
+							"name": "Get All Recipes",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{jwtToken}}",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/{{apiClient}}/recipes",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"{{apiClient}}",
+										"recipes"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "2",
+											"disabled": true
+										},
+										{
+											"key": "size",
+											"value": "10",
+											"disabled": true
+										}
+									]
+								},
+								"description": "# API Endpoint Documentation: Get Paginated List of Recipes\n\n## Endpoint\n\n**GET** `http://localhost:8080/api/client/recipes?page=0&size=10`\n\n## Authentication\n\nThis request requires authentication. The user must be logged in and provide a valid JWT token in the `Authorization` header.\n\n### Headers\n\n| Key | Value | Required |\n| --- | --- | --- |\n| Authorization | Bearer | Yes |\n\n## Request Parameters\n\nThis endpoint supports pagination, allowing the user to specify the page number and the number of results per page.\n\n| Parameter | Type | Default | Description |\n| --- | --- | --- | --- |\n| page | int | 0 | The page number to retrieve. |\n| size | int | 10 | The number of recipes per page. |\n\n## Response\n\nThe response is a JSON object containing a list of recipes.\n\n### Response Format\n\n``` json\n[\n    {\n        \"id\": 36,\n        \"title\": \"Chicken Teriyaki\",\n        \"description\": \"A flavorful grilled chicken dish coated with sweet and savory teriyaki sauce.\",\n        \"image\": \"https://res.cloudinary.com/cookio/image/upload/chicken_teriyaki.jpg\",\n        \"prepTime\": 10,\n        \"cookTime\": 15,\n        \"servings\": 3,\n        \"category\": \"Main Course\"\n    }\n]\n\n ```\n\n## Response Fields\n\n| Field | Type | Description |\n| --- | --- | --- |\n| id | int | Unique identifier for the recipe. |\n| title | string | Name of the recipe. |\n| description | string | A brief description of the recipe. |\n| image | string | URL to the recipe image. |\n| prepTime | int | Time required for preparation (in minutes). |\n| cookTime | int | Time required for cooking (in minutes). |\n| servings | int | Number of servings the recipe yields. |\n| category | string | The category of the recipe (e.g., Main Course, Dessert). |\n\n## Example Request\n\n``` http\nGET /api/client/recipes?page=2&size=5 HTTP/1.1\nHost: localhost:8080\nAuthorization: Bearer <JWT_TOKEN>\n\n ```\n\n## Example Response\n\n``` json\n[\n    {\n        \"id\": 42,\n        \"title\": \"Spaghetti Carbonara\",\n        \"description\": \"Classic Italian pasta dish with eggs, cheese, pancetta, and pepper.\",\n        \"image\": \"https://res.cloudinary.com/cookio/image/upload/spaghetti_carbonara.jpg\",\n        \"prepTime\": 15,\n        \"cookTime\": 20,\n        \"servings\": 2,\n        \"category\": \"Main Course\"\n    }\n]\n\n ```\n\n## Error Responses\n\n| Status Code | Meaning | Details |\n| --- | --- | --- |\n| 401 | Unauthorized | The request lacks a valid JWT token or the token is expired. |\n| 403 | Forbidden | The user does not have permission to access this resource. |\n| 500 | Internal Server Error | An unexpected error occurred on the server. |\n\n## Notes\n\n- If `page` or `size` parameters are not provided, the API will default to `page=1` and `size=10`.\n    \n- Ensure that the JWT token is valid and included in the request header."
+							},
+							"response": [
+								{
+									"name": "Successful obtaining of all recipes",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer ",
+												"type": "text",
+												"disabled": true
+											}
+										],
+										"url": {
+											"raw": "http://localhost:8080/api/client/recipes?page=1&size=10",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"api",
+												"client",
+												"recipes"
+											],
+											"query": [
+												{
+													"key": "page",
+													"value": "1"
+												},
+												{
+													"key": "size",
+													"value": "10"
+												}
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						},
+						{
+							"name": "Get Recipe by Id",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{jwtToken}}",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/{{apiClient}}/recipes/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"{{apiClient}}",
+										"recipes",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								},
+								"description": "### API Endpoint Documentation: Get Recipe by ID\n\n#### **Endpoint**\n\n`GET {{baseUrl}}/{{apiClient}}/recipes/:id`\n\n#### **Authentication**\n\n- The user must be **logged in** and provide a valid **JWT token** in the `Authorization` header.\n    \n- Authorization: Bearer\n    \n\n#### **Request Parameters**\n\n- **Path Parameter**:  \n    \n    - `id` (integer, required): The unique identifier of the recipe.\n        \n\n#### **Response**\n\nReturns a JSON object with the recipe details.\n\n##### **Successful Response (200 OK)**\n\n``` json\n{\n    \"id\": 36,\n    \"title\": \"Chicken Teriyaki\",\n    \"description\": \"A flavorful grilled chicken dish coated with sweet and savory teriyaki sauce.\",\n    \"image\": \"https://res.cloudinary.com/cookio/image/upload/chicken_teriyaki.jpg\",\n    \"prepTime\": 10,\n    \"cookTime\": 15,\n    \"servings\": 3,\n    \"category\": \"Main Course\"\n}\n\n ```\n\n##### **Error Responses**\n\n- { \"status\": 401, \"message\": \"Unauthorized: JWT token is missing or invalid\"}\n    \n- { \"status\": 404, \"message\": \"Recipe not found\"}\n    \n\n#### **Example Request**\n\n```\nGET http://localhost:8080/api/client/recipes/36\nHeaders:\nAuthorization: Bearer <your-jwt-token>\n\n ```"
+							},
+							"response": [
+								{
+									"name": "Successful obtaining of certain recipe",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{jwtToken}}",
+												"type": "text",
+												"disabled": true
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/{{apiClient}}/recipes/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"{{apiClient}}",
+												"recipes",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "34"
+												}
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Recipe not found",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{jwtToken}}",
+												"type": "text",
+												"disabled": true
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/{{apiClient}}/recipes/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"{{apiClient}}",
+												"recipes",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "11"
+												}
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						},
+						{
+							"name": "Get Recipes by Cuisine Id",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{jwtToken}}",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/{{apiClient}}/recipes/search/cuisine/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"{{apiClient}}",
+										"recipes",
+										"search",
+										"cuisine",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								},
+								"description": "### API Endpoint Documentation: Get Recipes by Cuisine\n\n#### **Endpoint**\n\n`GET {{baseUrl}}/{{apiClient}}/recipes/search/cuisine/:id`\n\n#### **Authentication**\n\n- The user must be **logged in** and provide a valid **JWT token** in the `Authorization` header.\n    \n- Authorization: Bearer\n    \n\n#### **Request Parameters**\n\n- **Path Parameter**:\n    \n    - `id` (integer, required): The unique identifier of the cuisine.\n        \n\n#### **Response**\n\nReturns a JSON array containing a list of recipes that belong to the specified cuisine.\n\n##### **Successful Response (200 OK)**\n\n``` json\n[\n    {\n        \"id\": 36,\n        \"title\": \"Chicken Teriyaki\",\n        \"description\": \"A flavorful grilled chicken dish coated with sweet and savory teriyaki sauce.\",\n        \"image\": \"https://res.cloudinary.com/cookio/image/upload/chicken_teriyaki.jpg\",\n        \"prepTime\": 10,\n        \"cookTime\": 15,\n        \"servings\": 3,\n        \"category\": \"Main Course\"\n    },\n    {\n        \"id\": 42,\n        \"title\": \"Sushi Rolls\",\n        \"description\": \"Traditional Japanese sushi rolls filled with fresh fish and vegetables.\",\n        \"image\": \"https://res.cloudinary.com/cookio/image/upload/sushi_rolls.jpg\",\n        \"prepTime\": 30,\n        \"cookTime\": 0,\n        \"servings\": 2,\n        \"category\": \"Appetizer\"\n    }\n]\n\n ```\n\n##### **Error Responses**\n\n- { \"status\": 401, \"message\": \"Unauthorized: JWT token is missing or invalid\"}\n    \n\n#### **Example Request**\n\n```\nGET http://localhost:8080/api/client/recipes/search/cuisine/2  \nHeaders:  \nAuthorization: Bearer <your-jwt-token>  \n\n ```"
+							},
+							"response": [
+								{
+									"name": "Successful obtaining of all recipes by cuisine",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{jwtToken}}",
+												"type": "text",
+												"disabled": true
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/{{apiClient}}/recipes/search/cuisine/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"{{apiClient}}",
+												"recipes",
+												"search",
+												"cuisine",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "4"
+												}
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						},
+						{
+							"name": "Get Recipes by Type Id",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{jwtToken}}",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/{{apiClient}}/recipes/search/type/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"{{apiClient}}",
+										"recipes",
+										"search",
+										"type",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								},
+								"description": "### API Endpoint Documentation: Get Recipes by Type\n\n#### **Endpoint**\n\n`GET {{baseUrl}}/{{apiClient}}/recipes/search/type/:id`\n\n#### **Authentication**\n\n- The user must be **logged in** and provide a valid **JWT token** in the `Authorization` header.\n    \n- Authorization: Bearer\n    \n\n#### **Request Parameters**\n\n- **Path Parameter**:\n    \n    - `id` (integer, required): The unique identifier of the recipe type (e.g., soups, desserts, main courses, etc.).\n        \n\n#### **Response**\n\nReturns a JSON array containing a list of recipes that belong to the specified recipe type.\n\n##### **Successful Response (200 OK)**\n\n``` json\n[\n    {\n        \"id\": 21,\n        \"title\": \"Tomato Soup\",\n        \"description\": \"A rich and creamy tomato soup with a hint of basil.\",\n        \"image\": \"https://res.cloudinary.com/cookio/image/upload/tomato_soup.jpg\",\n        \"prepTime\": 15,\n        \"cookTime\": 20,\n        \"servings\": 4,\n        \"category\": \"Soup\"\n    },\n    {\n        \"id\": 37,\n        \"title\": \"Beef Stroganoff\",\n        \"description\": \"Tender beef strips in a creamy mushroom sauce, served with pasta.\",\n        \"image\": \"https://res.cloudinary.com/cookio/image/upload/beef_stroganoff.jpg\",\n        \"prepTime\": 10,\n        \"cookTime\": 30,\n        \"servings\": 2,\n        \"category\": \"Main Course\"\n    }\n]\n\n ```\n\n##### **Error Responses**\n\n- { \"status\": 401, \"message\": \"Unauthorized: JWT token is missing or invalid\"}\n    \n\n#### **Example Request**\n\n```\nGET http://localhost:8080/api/client/recipes/search/type/3  \nHeaders:  \nAuthorization: Bearer <your-jwt-token>  \n\n ```"
+							},
+							"response": [
+								{
+									"name": "Successful retrieval of recipes of specific type",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{jwtToken}}",
+												"type": "text",
+												"disabled": true
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/{{apiClient}}/recipes/search/type/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"{{apiClient}}",
+												"recipes",
+												"search",
+												"type",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "4"
+												}
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						},
+						{
+							"name": "Get Recipes by Title",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{jwtToken}}",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/{{apiClient}}/recipes/search/title",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"{{apiClient}}",
+										"recipes",
+										"search",
+										"title"
+									],
+									"query": [
+										{
+											"key": "title",
+											"value": "Mexican",
+											"disabled": true
+										}
+									]
+								},
+								"description": "### API Endpoint Documentation: Search Recipes by Title\n\n#### **Endpoint**\n\n`GET http://localhost:8080/api/client/recipes/search/title?title={title}`\n\n#### **Authentication**\n\n- The user must be **logged in** and provide a valid **JWT token** in the `Authorization` header.\n    \n- Authorization: Bearer\n    \n\n#### **Request Parameters**\n\n- **Query Parameter**:  \n    \n    - `title` (string, required): The title or partial title of the recipe to search for.\n        \n\n#### **Response**\n\nReturns a JSON array containing a list of recipes that match the given title.\n\n##### **Successful Response (200 OK)**\n\n``` json\n[\n    {\n        \"id\": 12,\n        \"title\": \"Mexican Tacos\",\n        \"description\": \"Authentic Mexican tacos with seasoned beef, fresh vegetables, and salsa.\",\n        \"image\": \"https://res.cloudinary.com/cookio/image/upload/mexican_tacos.jpg\",\n        \"prepTime\": 20,\n        \"cookTime\": 15,\n        \"servings\": 4,\n        \"category\": \"Main Course\"\n    },\n    {\n        \"id\": 25,\n        \"title\": \"Mexican Enchiladas\",\n        \"description\": \"Spicy enchiladas stuffed with chicken and topped with a flavorful chili sauce.\",\n        \"image\": \"https://res.cloudinary.com/cookio/image/upload/mexican_enchiladas.jpg\",\n        \"prepTime\": 15,\n        \"cookTime\": 25,\n        \"servings\": 3,\n        \"category\": \"Main Course\"\n    }\n]\n\n ```\n\n##### **Error Responses**\n\n- { \"status\": 401, \"message\": \"Unauthorized: JWT token is missing or invalid\"}\n    \n\n#### **Example Request**\n\n```\nGET http://localhost:8080/api/client/recipes/search/title?title=Mexican  \nHeaders:  \nAuthorization: Bearer <your-jwt-token>  \n\n ```"
+							},
+							"response": [
+								{
+									"name": "Successful retrieval of recipes",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{jwtToken}}",
+												"type": "text",
+												"disabled": true
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/{{apiClient}}/recipes/search/title?title=Mexican",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"{{apiClient}}",
+												"recipes",
+												"search",
+												"title"
+											],
+											"query": [
+												{
+													"key": "title",
+													"value": "Mexican"
+												}
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						},
+						{
+							"name": "Get Recipe by Ingredients (currently doesn't work)",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{jwtToken}}",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/{{apiClient}}/recipes/search/ingredients?ingredients=",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"{{apiClient}}",
+										"recipes",
+										"search",
+										"ingredients"
+									],
+									"query": [
+										{
+											"key": "ingredients",
+											"value": ""
+										}
+									]
+								},
+								"description": "This method isn't working for now, but it'll be changed in the nearest future"
+							},
+							"response": [
+								{
+									"name": "Get Recipe by Ingredients",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{jwtToken}}",
+												"type": "text",
+												"disabled": true
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/{{apiClient}}/recipes/search/ingredients?ingredients=",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"{{apiClient}}",
+												"recipes",
+												"search",
+												"ingredients"
+											],
+											"query": [
+												{
+													"key": "ingredients",
+													"value": ""
+												}
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						},
+						{
+							"name": "Get Recipes by Author Id",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{jwtToken}}",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/{{apiClient}}/recipes/author/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"{{apiClient}}",
+										"recipes",
+										"author",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								},
+								"description": "### **API Endpoint Documentation: Get Recipes by Author**\n\n#### **Endpoint**\n\n`GET {{baseUrl}}/{{apiClient}}/recipes/author/:id`\n\n#### **Authentication**\n\n- The user must be **logged in** and provide a valid **JWT token** in the `Authorization` header.\n    \n- Authorization: Bearer\n    \n\n#### **Request Parameters**\n\n- **Path Parameter**:  \n    \n    - `id` (integer, required): The unique ID of the author whose recipes are being retrieved.\n        \n\n#### **Response**\n\nReturns a JSON array containing a list of recipes created by the specified author.\n\n##### **Successful Response (200 OK)**\n\n``` json\n[\n    {\n        \"id\": 10,\n        \"title\": \"Homemade Pasta\",\n        \"description\": \"Freshly made pasta with a rich tomato and basil sauce.\",\n        \"image\": \"https://res.cloudinary.com/cookio/image/upload/homemade_pasta.jpg\",\n        \"prepTime\": 30,\n        \"cookTime\": 20,\n        \"servings\": 2,\n        \"category\": \"Main Course\"\n    },\n    {\n        \"id\": 22,\n        \"title\": \"Chocolate Cake\",\n        \"description\": \"A moist and rich chocolate cake with a creamy ganache topping.\",\n        \"image\": \"https://res.cloudinary.com/cookio/image/upload/chocolate_cake.jpg\",\n        \"prepTime\": 20,\n        \"cookTime\": 40,\n        \"servings\": 6,\n        \"category\": \"Dessert\"\n    }\n]\n\n ```\n\n##### **Error Responses**\n\n- { \"status\": 401, \"message\": \"Unauthorized: JWT token is missing or invalid\"}\n    \n- { \"status\": 404, \"message\": \"No recipes found for the given author ID\"}\n    \n\n#### **Example Request**\n\n```\nGET {{baseUrl}}/{{apiClient}}/recipes/author/5  \nHeaders:  \nAuthorization: Bearer <your-jwt-token>  \n\n ```"
+							},
+							"response": [
+								{
+									"name": "Successful retrieval of recipes by author id",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{jwtToken}}",
+												"type": "text",
+												"disabled": true
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/{{apiClient}}/recipes/author/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"{{apiClient}}",
+												"recipes",
+												"author",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "27"
+												}
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						}
+					]
+				}
+			],
+			"description": "This is folder that contains requests connected with recipes",
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{jwtToken}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Cuisine",
+			"item": [
+				{
+					"name": "Client",
+					"item": [
+						{
+							"name": "Get All Cuisines",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/{{apiClient}}/cuisines",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"{{apiClient}}",
+										"cuisines"
+									]
+								},
+								"description": "## API Endpoint Documentation: Get Cuisines\n\n### Endpoint\n\n**GET** `{{baseUrl}}/{{apiClient}}/cuisines`\n\n### Authentication\n\n- The user must be logged in and provide a valid JWT token in the **Authorization** header.\n    \n- Example:\n    \n\n```\nAuthorization: Bearer <your-jwt-token>\n\n ```\n\n### Request Parameters\n\n- No query parameters are required for this endpoint.\n    \n\n### Response\n\nReturns a JSON array containing a list of cuisines available.\n\n#### Successful Response (200 OK)\n\n``` json\n[\n    {\n        \"id\": 4,\n        \"name\": \"Italian\",\n        \"description\": \"Known for pasta, pizza, and rich sauces like marinara and alfredo.\",\n        \"createdAt\": \"2024-11-23T13:53:44\",\n        \"updatedAt\": \"2024-11-23T13:53:44\"\n    },\n    {\n        \"id\": 5,\n        \"name\": \"Japanese\",\n        \"description\": \"Famous for sushi, sashimi, ramen, and umami-rich dishes.\",\n        \"createdAt\": \"2024-11-23T13:53:44\",\n        \"updatedAt\": \"2024-11-23T13:53:44\"\n    }\n]\n\n ```\n\n### Error Responses\n\n- **401 Unauthorized**: If the user is not authenticated or provides an invalid token.\n    \n\n``` json\n{\n    \"status\": 401,\n    \"message\": \"Unauthorized: JWT token is missing or invalid\"\n}\n\n ```\n\n### Example Request\n\n```\nGET http://localhost:8080/api/client/cuisines\nHeaders:\nAuthorization: Bearer <your-jwt-token>\n\n ```\n\n---"
+							},
+							"response": []
+						},
+						{
+							"name": "Get Cuisine by Id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/{{apiClient}}/cuisines/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"{{apiClient}}",
+										"cuisines",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								},
+								"description": "## API Endpoint Documentation: Get Cuisine by ID\n\n### Authentication\n\n- The user must be logged in and provide a valid JWT token in the **Authorization** header.\n    \n- Example:\n    \n\n```\nAuthorization: Bearer <your-jwt-token>\n\n ```\n\n### Request Parameters\n\n- **Path Parameter**:\n    \n    - `id` (integer, required): The unique identifier of the cuisine (e.g., 4 for Italian, 5 for Japanese).\n        \n\n### Response\n\nReturns a JSON object containing the details of the specified cuisine.\n\n#### Successful Response (200 OK)\n\n``` json\n{\n    \"id\": 4,\n    \"name\": \"Italian\",\n    \"description\": \"Known for pasta, pizza, and rich sauces like marinara and alfredo.\",\n    \"createdAt\": \"2024-11-23T13:53:44\",\n    \"updatedAt\": \"2024-11-23T13:53:44\"\n}\n\n ```\n\n#### Example for ID = 5 (Japanese Cuisine)\n\n``` json\n{\n    \"id\": 5,\n    \"name\": \"Japanese\",\n    \"description\": \"Famous for sushi, sashimi, ramen, and umami-rich dishes.\",\n    \"createdAt\": \"2024-11-23T13:53:44\",\n    \"updatedAt\": \"2024-11-23T13:53:44\"\n}\n\n ```\n\n### Error Responses\n\n- **401 Unauthorized**: If the user is not authenticated or provides an invalid token.\n    \n\n``` json\n{\n    \"status\": 401,\n    \"message\": \"Unauthorized: JWT token is missing or invalid\"\n}\n\n ```\n\n- **404 Not Found**: If the cuisine with the specified ID is not found.\n    \n\n``` json\n{\n    \"status\": 404,\n    \"message\": \"Cuisine not found\"\n}\n\n ```\n\n### Example Request\n\n```\nGET http://localhost:8080/api/client/cuisines/4\nHeaders:\nAuthorization: Bearer <your-jwt-token>\n\n ```\n\n---"
+							},
+							"response": [
+								{
+									"name": "Success",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/{{apiClient}}/cuisines/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"{{apiClient}}",
+												"cuisines",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "5"
+												}
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Cuisine doesn't exist",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/{{apiClient}}/cuisines/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"{{apiClient}}",
+												"cuisines",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "1"
+												}
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						},
+						{
+							"name": "Get Cuisine by Name",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/{{apiClient}}/cuisines/search/name",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"{{apiClient}}",
+										"cuisines",
+										"search",
+										"name"
+									],
+									"query": [
+										{
+											"key": "name",
+											"value": "Italian",
+											"disabled": true
+										}
+									]
+								},
+								"description": "## API Endpoint Documentation: Search Cuisine by Name\n\n### Endpoint\n\n**GET** `{{baseUrl}}/{{apiClient}}/cuisines/search/name?name={name}`\n\n### Authentication\n\n- The user must be logged in and provide a valid JWT token in the **Authorization** header.\n    \n- Example:\n    \n\n```\nAuthorization: Bearer <your-jwt-token>\n\n ```\n\n### Request Parameters\n\n- **Query Parameter**:  \n    \n    - `name` (string, required): The name of the cuisine you are searching for (e.g., \"Italian\", \"Japanese\").\n        \n\n### Response\n\nReturns a JSON array containing the details of the cuisines that match the specified name.\n\n#### Successful Response (200 OK)\n\nIf a cuisine with the specified name is found:\n\n``` json\n[\n    {\n        \"id\": 4,\n        \"name\": \"Italian\",\n        \"description\": \"Known for pasta, pizza, and rich sauces like marinara and alfredo.\",\n        \"createdAt\": \"2024-11-23T13:53:44\",\n        \"updatedAt\": \"2024-11-23T13:53:44\"\n    }\n]\n\n ```\n\n#### Error Responses\n\n- **401 Unauthorized**: If the user is not authenticated or provides an invalid JWT token.\n    \n\n``` json\n{\n    \"status\": 401,\n    \"message\": \"Unauthorized: JWT token is missing or invalid\"\n}\n\n ```\n\n- **404 Not Found**: If no cuisine matches the specified name.\n    \n\n``` json\n{\n    \"status\": 404,\n    \"message\": \"No cuisine found with name: ergerge\",\n    \"timestamp\": \"2025-03-02T17:36:18.5852942\"\n}\n\n ```\n\n### Example Request\n\n```\nGET http://localhost:8080/api/client/cuisines/search/name?name=Italian\nHeaders:\nAuthorization: Bearer <your-jwt-token>\n\n ```\n\n---"
+							},
+							"response": [
+								{
+									"name": "Success",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/{{apiClient}}/cuisines/search/name?name=Italian",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"{{apiClient}}",
+												"cuisines",
+												"search",
+												"name"
+											],
+											"query": [
+												{
+													"key": "name",
+													"value": "Italian"
+												}
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Fail (cuisine with this name doesn't exist)",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/{{apiClient}}/cuisines/search/name?name=ergergegdfbv",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"{{apiClient}}",
+												"cuisines",
+												"search",
+												"name"
+											],
+											"query": [
+												{
+													"key": "name",
+													"value": "ergergegdfbv"
+												}
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Admin",
+					"item": [
+						{
+							"name": "Create Cuisine",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/{{apiAdmin}}/cuisines/create",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"{{apiAdmin}}",
+										"cuisines",
+										"create"
+									]
+								},
+								"description": "## API Endpoint Documentation: Create Cuisine\n\n### Endpoint\n\n**POST** `{{baseUrl}}/{{apiAdmin}}/cuisines/create`\n\n### Authentication\n\n- The user must be logged in and provide a valid JWT token in the **Authorization** header.\n    \n- Only users with an admin role are allowed to access this endpoint.\n    \n- Example:\n    \n\n```\nAuthorization: Bearer <your-jwt-admin-token>\n\n ```\n\n### Request Body\n\nThe request body must contain the details of the cuisine to be created:\n\n``` json\n{\n    \"name\": \"Polish\",\n    \"description\": \"Polish cuisine etc etc etc\"\n}\n\n ```\n\n### Response\n\n#### Successful Response (201 Created)\n\nIf the cuisine is successfully created:\n\n``` json\n{\n    \"id\": 16,\n    \"name\": \"Polish\",\n    \"description\": \"Polish cuisine etc etc etc\",\n    \"createdAt\": \"2025-03-02T18:10:04.550857\",\n    \"updatedAt\": \"2025-03-02T18:10:04.550857\"\n}\n\n ```\n\n#### Error Responses\n\n- **409 Conflict**: If the cuisine with the specified name already exists.\n    \n\n``` json\n{\n    \"status\": 409,\n    \"message\": \"Cuisine with name Polish already exists\",\n    \"timestamp\": \"2025-03-02T18:11:45.959904\"\n}\n\n ```\n\n- **401 Unauthorized**: If the user is not authenticated or does not have admin privileges (e.g., invalid JWT token or non-admin user).\n    \n\n``` json\n{\n    \"status\": 401,\n    \"message\": \"Unauthorized: JWT token is missing, invalid, or the user is not an admin\"\n}\n\n ```\n\n### Example Request\n\n```\nPOST http://localhost:8080/api/admin/cuisines/create\nHeaders:\nAuthorization: Bearer <your-jwt-admin-token>\nBody:\n{\n    \"name\": \"Polish\",\n    \"description\": \"Polish cuisine etc etc etc\"\n}\n\n ```\n\n---"
+							},
+							"response": [
+								{
+									"name": "Successful creation",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"name\": \"Polish\",\r\n    \"description\": \"Polish cuisine etc etc etc\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/{{apiAdmin}}/cuisines/create",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"{{apiAdmin}}",
+												"cuisines",
+												"create"
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Fail (cuisine exists)",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"name\": \"Polish\",\r\n    \"description\": \"Polish cuisine etc etc etc\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/{{apiAdmin}}/cuisines/create",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"{{apiAdmin}}",
+												"cuisines",
+												"create"
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						},
+						{
+							"name": "Update Cuisine",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/{{apiAdmin}}/cuisines/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"{{apiAdmin}}",
+										"cuisines",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "14"
+										}
+									]
+								},
+								"description": "## API Endpoint Documentation: Update Cuisine by ID\n\n### Endpoint\n\n**PUT** `{{baseUrl}}/{{apiAdmin}}/cuisines/:id`\n\n### Authentication\n\n- The user must be logged in and provide a valid JWT token in the **Authorization** header.\n    \n- Only users with an admin role are allowed to access this endpoint.\n    \n- Example:\n    \n\n```\nAuthorization: Bearer <your-jwt-admin-token>\n\n ```\n\n### Path Variable\n\n- **id** (integer, required): The unique identifier of the cuisine you wish to update. This should be provided in the URL as part of the request path.\n    \n    For example, in the URL `{{baseUrl}}/{{apiAdmin}}/cuisines/16`, the `id` is `16`, which identifies the cuisine to be updated.\n    \n\n### Request Body\n\nThe request body should contain the updated details for the cuisine:\n\n``` json\n{\n    \"name\": \"American\",\n    \"description\": \"American cuisine blah blah blah\"\n}\n\n ```\n\n### Response\n\n#### Successful Response (200 OK)\n\nIf the cuisine is successfully updated:\n\n``` json\n{\n    \"id\": 16,\n    \"name\": \"American\",\n    \"description\": \"American cuisine blah blah blah\",\n    \"createdAt\": \"2025-03-02T18:10:04.550857\",\n    \"updatedAt\": \"2025-03-02T18:10:04.550857\"\n}\n\n ```\n\n#### Error Responses\n\n- **404 Not Found**: If the cuisine with the specified `id` does not exist.\n    \n\n``` json\n{\n    \"status\": 404,\n    \"message\": \"Cuisine not found\"\n}\n\n ```\n\n- **409 Conflict**: If there is a conflict, such as trying to update the cuisine with an existing name.\n    \n\n``` json\n{\n    \"status\": 409,\n    \"message\": \"Cuisine with name American already exists\",\n    \"timestamp\": \"2025-03-02T18:11:45.959904\"\n}\n\n ```\n\n- **401 Unauthorized**: If the user is not authenticated or does not have admin privileges (e.g., invalid JWT token or non-admin user).\n    \n\n``` json\n{\n    \"status\": 401,\n    \"message\": \"Unauthorized: JWT token is missing, invalid, or the user is not an admin\"\n}\n\n ```\n\n### Example Request\n\n```\nPUT http://localhost:8080/api/admin/cuisines/16\nHeaders:\nAuthorization: Bearer <your-jwt-admin-token>\nBody:\n{\n    \"name\": \"American\",\n    \"description\": \"American cuisine blah blah blah\"\n}\n\n ```\n\n---\n\n---"
+							},
+							"response": [
+								{
+									"name": "Update Cuisine",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"name\": \"American\",\r\n    \"description\": \"American cuisine blah blah blah\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/{{apiAdmin}}/cuisines/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"{{apiAdmin}}",
+												"cuisines",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "13",
+													"description": "Enter the id of cuisine you'll like to change"
+												}
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Fail (confict)",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"name\": \"American\",\r\n    \"description\": \"American cuisine blah blah blah\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/{{apiAdmin}}/cuisines/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"{{apiAdmin}}",
+												"cuisines",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "13",
+													"description": "Enter the id of cuisine you'll like to change"
+												}
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Fail (cuisine not found)",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"name\": \"Polish\",\r\n    \"description\": \"Polish cuisine etc etc etc 2.0\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/{{apiAdmin}}/cuisines/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"{{apiAdmin}}",
+												"cuisines",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "1"
+												}
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						},
+						{
+							"name": "Delete Cuisine",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/{{apiAdmin}}/cuisines/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"{{apiAdmin}}",
+										"cuisines",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								},
+								"description": "## API Endpoint Documentation: Delete Cuisine by ID\n\n### Authentication\n\n- The user must be logged in and provide a valid JWT token in the **Authorization** header.\n    \n- Only users with an admin role are allowed to access this endpoint.\n    \n- Example:\n    \n\n```\nAuthorization: Bearer <your-jwt-admin-token>\n\n ```\n\n### Request Parameters\n\n- **Path Parameter**:  \n    \n    - `id` (integer, required): The unique identifier of the cuisine to be deleted.\n        \n\n### Response\n\n- **204 No Content**: If the cuisine was successfully deleted.\n    \n\n``` json\n{}\n\n ```\n\n#### Error Responses\n\n- **401 Unauthorized**: If the user is not authenticated or does not have admin privileges (e.g., invalid JWT token or non-admin user).\n    \n\n``` json\n{\n    \"status\": 401,\n    \"message\": \"Unauthorized: JWT token is missing, invalid, or the user is not an admin\"\n}\n\n ```\n\n- **404 Not Found**: If the cuisine with the specified ID does not exist.\n    \n\n``` json\n{\n    \"status\": 404,\n    \"message\": \"Cuisine not found\"\n}\n\n ```\n\n### Example Request\n\n```\nDELETE http://localhost:8080/api/admin/cuisines/4\nHeaders:\nAuthorization: Bearer <your-jwt-admin-token>\n\n ```\n\n---"
+							},
+							"response": [
+								{
+									"name": "Delete Cuisine",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"name\": \"Polish\",\r\n    \"description\": \"Polish cuisine etc etc etc\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/{{apiAdmin}}/cuisines/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"{{apiAdmin}}",
+												"cuisines",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "15"
+												}
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Fail (cuisine not found)",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"name\": \"Polish\",\r\n    \"description\": \"Polish cuisine etc etc etc\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/{{apiAdmin}}/cuisines/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"{{apiAdmin}}",
+												"cuisines",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "1"
+												}
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						}
+					]
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{jwtToken}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Type",
+			"item": [
+				{
+					"name": "Client",
+					"item": [
+						{
+							"name": "Get All Types",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/{{apiClient}}/types",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"{{apiClient}}",
+										"types"
+									]
+								},
+								"description": "# **API Endpoint Documentation: Get Types**\n\n## **Authentication**\n\nThe user must be logged in and provide a valid JWT token in the `Authorization` header.\n\n### **Example:**\n\n```\nAuthorization: Bearer <your-jwt-token>\n\n ```\n\n## **Request Parameters**\n\nNo query parameters are required for this endpoint.\n\n## **Response**\n\nReturns a JSON array containing a list of available types.\n\n### **Successful Response (200 OK)**\n\n``` json\n[\n    {\n        \"id\": 4,\n        \"name\": \"Appetizer\",\n        \"description\": \"A small dish served before the main course to stimulate the appetite.\",\n        \"createdAt\": \"2024-11-23T13:56:32\",\n        \"updatedAt\": \"2024-11-23T13:56:32\"\n    }\n]\n\n ```\n\n## **Error Responses**\n\n### **401 Unauthorized:**\n\nIf the user is not authenticated or provides an invalid token.\n\n``` json\n{\n    \"status\": 401,\n    \"message\": \"Unauthorized: JWT token is missing or invalid\"\n}\n\n ```\n\n## **Example Request**\n\n```\nGET http://localhost:8080/api/client/types\nHeaders:\nAuthorization: Bearer <your-jwt-token>\n\n ```\n\n---"
+							},
+							"response": []
+						},
+						{
+							"name": "Get Types by Id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/{{apiClient}}/types/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"{{apiClient}}",
+										"types",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								},
+								"description": "# **API Endpoint Documentation: Get Type by ID**\n\n## **Authentication**\n\nThe user must be logged in and provide a valid JWT token in the `Authorization` header.\n\n### **Example:**\n\n```\nAuthorization: Bearer <your-jwt-token>\n\n ```\n\n## **Request Parameters**\n\n**Path Parameter:**\n\n- `id` (integer, required): The unique identifier of the type (e.g., 4 for Appetizer).\n    \n\n## **Response**\n\nReturns a JSON object containing the details of the specified type.\n\n### **Successful Response (200 OK)**\n\n``` json\n{\n    \"id\": 4,\n    \"name\": \"Appetizer\",\n    \"description\": \"A small dish served before the main course to stimulate the appetite.\",\n    \"createdAt\": \"2024-11-23T13:56:32\",\n    \"updatedAt\": \"2024-11-23T13:56:32\"\n}\n\n ```\n\n## **Error Responses**\n\n### **401 Unauthorized:**\n\nIf the user is not authenticated or provides an invalid token.\n\n``` json\n{\n    \"status\": 401,\n    \"message\": \"Unauthorized: JWT token is missing or invalid\"\n}\n\n ```\n\n### **404 Not Found:**\n\nIf the type with the specified ID is not found.\n\n``` json\n{\n    \"status\": 404,\n    \"message\": \"Type not found\"\n}\n\n ```\n\n## **Example Request**\n\n```\nGET http://localhost:8080/api/client/types/4\nHeaders:\nAuthorization: Bearer <your-jwt-token>\n\n ```\n\n---"
+							},
+							"response": [
+								{
+									"name": "Success",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/{{apiClient}}/types/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"{{apiClient}}",
+												"types",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "5"
+												}
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Type doesn't exist",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/{{apiClient}}/types/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"{{apiClient}}",
+												"types",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "1"
+												}
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Get Types by Id",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/{{apiClient}}/types/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"{{apiClient}}",
+												"types",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "5"
+												}
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Type doesn't exist",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/{{apiClient}}/types/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"{{apiClient}}",
+												"types",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "1"
+												}
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						},
+						{
+							"name": "Get Type by Name",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/{{apiClient}}/types/search/name",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"{{apiClient}}",
+										"types",
+										"search",
+										"name"
+									],
+									"query": [
+										{
+											"key": "name",
+											"value": "beverage",
+											"disabled": true
+										}
+									]
+								},
+								"description": "# **API Endpoint Documentation: Search Type by Name**\n\n## **Endpoint**\n\n`GET http://localhost:8080/api/client/types/search/name?name={name}`\n\n## **Authentication**\n\nThe user must be logged in and provide a valid JWT token in the `Authorization` header.\n\n### **Example:**\n\n```\nAuthorization: Bearer <your-jwt-token>\n\n ```\n\n## **Request Parameters**\n\n**Query Parameter:**\n\n- `name` (string, required): The name of the type you are searching for (e.g., \"Appetizer\").\n    \n\n## **Response**\n\nReturns a JSON array containing the details of the types that match the specified name.\n\n### **Successful Response (200 OK)**\n\nIf a type with the specified name is found:\n\n``` json\n[\n    {\n        \"id\": 4,\n        \"name\": \"Appetizer\",\n        \"description\": \"A small dish served before the main course to stimulate the appetite.\",\n        \"createdAt\": \"2024-11-23T13:56:32\",\n        \"updatedAt\": \"2024-11-23T13:56:32\"\n    }\n]\n\n ```\n\n## **Error Responses**\n\n### **401 Unauthorized:**\n\nIf the user is not authenticated or provides an invalid JWT token.\n\n``` json\n{\n    \"status\": 401,\n    \"message\": \"Unauthorized: JWT token is missing or invalid\"\n}\n\n ```\n\n### **404 Not Found:**\n\nIf no type matches the specified name.\n\n``` json\n{\n    \"status\": 404,\n    \"message\": \"No type found with name: XYZ\",\n    \"timestamp\": \"2025-03-02T17:36:18.5852942\"\n}\n\n ```\n\n## **Example Request**\n\n```\nGET http://localhost:8080/api/client/types/search/name?name=Appetizer\nHeaders:\nAuthorization: Bearer <your-jwt-token>\n\n ```\n\n---"
+							},
+							"response": [
+								{
+									"name": "Success",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/{{apiClient}}/types/search/name?name=beverage",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"{{apiClient}}",
+												"types",
+												"search",
+												"name"
+											],
+											"query": [
+												{
+													"key": "name",
+													"value": "beverage"
+												}
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Fail (type with this name doesn't exist)",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/{{apiClient}}/types/search/name?name=ergergergerg",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"{{apiClient}}",
+												"types",
+												"search",
+												"name"
+											],
+											"query": [
+												{
+													"key": "name",
+													"value": "ergergergerg"
+												}
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Admin",
+					"item": [
+						{
+							"name": "Create Type",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/{{apiAdmin}}/types/create",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"{{apiAdmin}}",
+										"types",
+										"create"
+									]
+								},
+								"description": "# **API Endpoint Documentation: Create Type**\n\n## **Authentication**\n\nThe user must be logged in and provide a valid JWT token in the `Authorization` header.  \n  \nOnly users with an admin role are allowed to access this endpoint.\n\n### **Example:**\n\n```\nAuthorization: Bearer <your-jwt-admin-token>\n\n ```\n\n## **Request Body**\n\nThe request body must contain the details of the type to be created.\n\n``` json\n{\n    \"name\": \"Appetizer\",\n    \"description\": \"A small dish served before the main course to stimulate the appetite.\"\n}\n\n ```\n\n## **Response**\n\n### **201 Created**\n\nIf the type is successfully created:\n\n``` json\n{\n    \"id\": 16,\n    \"name\": \"Appetizer\",\n    \"description\": \"A small dish served before the main course to stimulate the appetite.\",\n    \"createdAt\": \"2025-03-02T18:10:04.550857\",\n    \"updatedAt\": \"2025-03-02T18:10:04.550857\"\n}\n\n ```\n\n## **Error Responses**\n\n### **409 Conflict:**\n\n``` json\n{\n    \"status\": 409,\n    \"message\": \"Type with name Appetizer already exists\",\n    \"timestamp\": \"2025-03-02T18:11:45.959904\"\n}\n\n ```\n\n### **401 Unauthorized:**\n\n``` json\n{\n    \"status\": 401,\n    \"message\": \"Unauthorized: JWT token is missing, invalid, or the user is not an admin\"\n}\n\n ```\n\n## **Example Request**\n\n```\nPOST http://localhost:8080/api/admin/types/create\nHeaders:\nAuthorization: Bearer <your-jwt-admin-token>\nBody:\n{\n    \"name\": \"Appetizer\",\n    \"description\": \"A small dish served before the main course to stimulate the appetite.\"\n}\n\n ```"
+							},
+							"response": [
+								{
+									"name": "Successful creation",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"name\": \"New Type\",\r\n    \"description\": \"Some description\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/{{apiAdmin}}/types/create",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"{{apiAdmin}}",
+												"types",
+												"create"
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Fail (type exists)",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"name\": \"Appetizer\",\r\n    \"description\": \"Some description\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/{{apiAdmin}}/types/create",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"{{apiAdmin}}",
+												"types",
+												"create"
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						},
+						{
+							"name": "Update Type",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/{{apiAdmin}}/types/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"{{apiAdmin}}",
+										"types",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								},
+								"description": "# **API Endpoint Documentation: Update Type by ID**\n\n## **Authentication**\n\nThe user must be logged in and provide a valid JWT token in the `Authorization` header.  \n  \nOnly users with an admin role are allowed to access this endpoint.\n\n### **Example:**\n\n```\nAuthorization: Bearer <your-jwt-admin-token>\n\n ```\n\n## **Path Variable**\n\n- **id** (integer, required): The unique identifier of the type you wish to update.  \n    \n    - Example: In `http://localhost:8080/api/admin/types/10`, the `id` is `10`, identifying the type to be updated.\n        \n\n## **Request Body**\n\nThe request body should contain the updated details for the type.\n\n``` json\n{\n    \"name\": \"Dessert\",\n    \"description\": \"Sweet course typically served at the end of a meal.\"\n}\n\n ```\n\n## **Response**\n\n### **200 OK**\n\nIf the type is successfully updated:\n\n``` json\n{\n    \"id\": 10,\n    \"name\": \"Dessert\",\n    \"description\": \"Sweet course typically served at the end of a meal.\",\n    \"createdAt\": \"2025-03-02T18:10:04.550857\",\n    \"updatedAt\": \"2025-03-02T18:10:04.550857\"\n}\n\n ```\n\n## **Error Responses**\n\n### **404 Not Found:**\n\n``` json\n{\n    \"status\": 404,\n    \"message\": \"Type not found\"\n}\n\n ```\n\n### **409 Conflict:**\n\n``` json\n{\n    \"status\": 409,\n    \"message\": \"Type with name Dessert already exists\",\n    \"timestamp\": \"2025-03-02T18:11:45.959904\"\n}\n\n ```\n\n### **401 Unauthorized:**\n\n``` json\n{\n    \"status\": 401,\n    \"message\": \"Unauthorized: JWT token is missing, invalid, or the user is not an admin\"\n}\n\n ```\n\n## **Example Request**\n\n```\nPUT http://localhost:8080/api/admin/types/10\nHeaders:\nAuthorization: Bearer <your-jwt-admin-token>\nBody:\n{\n    \"name\": \"Dessert\",\n    \"description\": \"Sweet course typically served at the end of a meal.\"\n}\n\n ```"
+							},
+							"response": [
+								{
+									"name": "Successful update",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"name\": \"New Type 2.0\",\r\n    \"description\": \"Some description\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/{{apiAdmin}}/types/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"{{apiAdmin}}",
+												"types",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "5"
+												}
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Fail (not found)",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"name\": \"New Type 2.0\",\r\n    \"description\": \"Some description\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/{{apiAdmin}}/types/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"{{apiAdmin}}",
+												"types",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "1"
+												}
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						},
+						{
+							"name": "Delete Type",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Polish\",\r\n    \"description\": \"Polish cuisine etc etc etc\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/{{apiAdmin}}/types/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"{{apiAdmin}}",
+										"types",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								},
+								"description": "# **API Endpoint Documentation: Delete Type by ID**\n\n## **Authentication**\n\nThe user must be logged in and provide a valid JWT token in the `Authorization` header.  \n  \nOnly users with an admin role are allowed to access this endpoint.\n\n### **Example:**\n\n```\nAuthorization: Bearer <your-jwt-admin-token>\n\n ```\n\n## **Request Parameters**\n\n**Path Parameter:**\n\n- `id` (integer, required): The unique identifier of the type to be deleted.\n    \n\n## **Response**\n\n### **204 No Content**\n\n``` json\n{}\n\n ```\n\n## **Error Responses**\n\n### **401 Unauthorized:**\n\n``` json\n{\n    \"status\": 401,\n    \"message\": \"Unauthorized: JWT token is missing, invalid, or the user is not an admin\"\n}\n\n ```\n\n### **404 Not Found:**\n\n``` json\n{\n    \"status\": 404,\n    \"message\": \"Type not found\"\n}\n\n ```\n\n## **Example Request**\n\n```\nDELETE http://localhost:8080/api/admin/types/4\nHeaders:\nAuthorization: Bearer <your-jwt-admin-token>\n\n ```"
+							},
+							"response": [
+								{
+									"name": "Success",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"name\": \"Polish\",\r\n    \"description\": \"Polish cuisine etc etc etc\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/{{apiAdmin}}/types/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"{{apiAdmin}}",
+												"types",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "14",
+													"description": "Enter the value of type you'd like to delete"
+												}
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Fail (type not found)",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"name\": \"Polish\",\r\n    \"description\": \"Polish cuisine etc etc etc\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/{{apiAdmin}}/types/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"{{apiAdmin}}",
+												"types",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "12221231231"
+												}
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						}
+					]
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{jwtToken}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Ingredient",
+			"item": [
+				{
+					"name": "Admin",
+					"item": [
+						{
+							"name": "Create Ingredient",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Mango 2.0\",\r\n    \"type\": \"Fruit\",\r\n    \"calories\": 50,\r\n    \"unit\": \"grams\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/{{apiAdmin}}/ingredients/create",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"{{apiAdmin}}",
+										"ingredients",
+										"create"
+									]
+								},
+								"description": "### **Create a New Ingredient (Admin Only)**\n\n#### **Endpoint:**\n\n`POST {{baseUrl}}/{{apiAdmin}}/ingredients/create`\n\n#### **Authentication:**\n\n- This request requires an **admin** role.\n    \n- The user must be **logged in** and provide a valid **JWT token** in the request headers.\n    \n\n#### **Headers:**\n\n``` plaintext\nAuthorization: Bearer <your_jwt_token>\nContent-Type: application/json\n\n ```\n\n#### **Request Body (JSON):**\n\nSend a JSON object with the following fields:\n\n``` json\n{\n    \"name\": \"Mango 2.0\",\n    \"type\": \"Fruit\",\n    \"calories\": 50,\n    \"unit\": \"grams\"\n}\n\n ```\n\n#### **Request Parameters:**\n\n- `name` _(string, required)_ – The name of the ingredient.\n    \n- `type` _(string, required)_ – The category of the ingredient (e.g., Fruit, Vegetable, Meat).\n    \n- `calories` _(integer, required)_ – The number of calories per unit.\n    \n- `unit` _(string, required)_ – The measurement unit (e.g., grams, ml, pieces).\n    \n\n#### **Response (Success – 201 Created):**\n\n``` json\n{\n    \"id\": 101,\n    \"name\": \"Mango 2.0\",\n    \"type\": \"Fruit\",\n    \"calories\": 50,\n    \"unit\": \"grams\",\n    \"createdAt\": \"2025-03-03T19:30:00\",\n    \"updatedAt\": \"2025-03-03T19:30:00\"\n}\n\n ```\n\n#### **Response (Errors):**\n\n- **401 Unauthorized** – If the user is not logged in or does not provide a valid JWT token.\n    \n- **400 Bad Request** – If required fields are missing or invalid.\n    \n- **409 Conflict** – If an ingredient with the same name already exists.\n    \n\n#### **Example Error Response (409 Conflict - Duplicate Ingredient):**\n\n``` json\n{\n    \"status\": 409,\n    \"message\": \"Ingredient with this name already exists\",\n    \"timestamp\": \"2025-03-03T19:30:15\"\n}\n\n ```"
+							},
+							"response": [
+								{
+									"name": "Success",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"name\": \"Mango 2.0\",\r\n    \"type\": \"Fruit\",\r\n    \"calories\": 50,\r\n    \"unit\": \"grams\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/{{apiAdmin}}/ingredients/create",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"{{apiAdmin}}",
+												"ingredients",
+												"create"
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Fail (ingredient exists)",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"name\": \"Mango\",\r\n    \"type\": \"Fruit\",\r\n    \"calories\": 50,\r\n    \"unit\": \"grams\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/{{apiAdmin}}/ingredients/create",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"{{apiAdmin}}",
+												"ingredients",
+												"create"
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Fail (some field wasn't included)",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"name\": \"Mango 2.0\",\r\n    \"type\": \"Fruit\",\r\n    \"calories\": 50,\r\n    \"unit\": \"grams\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/{{apiAdmin}}/ingredients/create",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"{{apiAdmin}}",
+												"ingredients",
+												"create"
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						},
+						{
+							"name": "Update Ingredient",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/{{apiAdmin}}/ingredients/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"{{apiAdmin}}",
+										"ingredients",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "110"
+										}
+									]
+								},
+								"description": "# **API Endpoint Documentation: Update Ingredient by ID**\n\n## **Endpoint**\n\n`PUT {{baseUrl}}/{{apiAdmin}}/ingredients/:id`\n\n## **Authentication**\n\nThe user must be logged in and provide a valid JWT token in the `Authorization` header.\n\nOnly users with an admin role are allowed to access this endpoint.\n\n### **Example:**\n\n```\nAuthorization: Bearer <your-jwt-admin-token>\n\n ```\n\n## **Path Parameter**\n\n- `id` (integer, required): The unique identifier of the ingredient to be updated.\n    \n\n## **Request Body**\n\nThe request body should contain the updated details for the ingredient. Example:\n\n``` json\n{\n    \"name\": \"Coffee\",\n    \"calories\": 3,\n    \"unit\": \"grams\",\n    \"type\": \"Beverage\"\n}\n\n ```\n\n## **Response**\n\n### **Successful Response (200 OK)**\n\nIf the ingredient is successfully updated:\n\n``` json\n{\n    \"id\": 8,\n    \"name\": \"Coffee\",\n    \"calories\": 3,\n    \"unit\": \"grams\",\n    \"type\": \"Beverage\",\n    \"createdAt\": \"2024-11-23T13:55:11\",\n    \"updatedAt\": \"2025-03-03T17:36:21.618867\"\n}\n\n ```\n\n### **Error Responses**\n\n#### **404 Not Found**\n\nIf the ingredient with the specified ID does not exist:\n\n``` json\n{\n    \"status\": 404,\n    \"message\": \"Ingredient not found\"\n}\n\n ```\n\n#### **409 Conflict**\n\nIf there is a conflict, such as trying to update the ingredient with an existing name:\n\n``` json\n{\n    \"status\": 409,\n    \"message\": \"This value already exists. Please choose a different one.\",\n    \"timestamp\": \"2025-03-03T17:36:21.618867\"\n}\n\n ```\n\n#### **401 Unauthorized**\n\nIf the user is not authenticated or does not have admin privileges (e.g., invalid JWT token or non-admin user):\n\n``` json\n{\n    \"status\": 401,\n    \"message\": \"Unauthorized: JWT token is missing, invalid, or the user is not an admin\"\n}\n\n ```\n\n## **Example Request**\n\n```\nPUT http://localhost:8080/api/admin/ingredients/8\nHeaders:\nAuthorization: Bearer <your-jwt-admin-token>\nBody:\n{\n    \"name\": \"Coffee\",\n    \"calories\": 3,\n    \"unit\": \"grams\",\n    \"type\": \"Beverage\"\n}\n\n ```"
+							},
+							"response": [
+								{
+									"name": "Fail (doesn't exist)",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"name\": \"Coffee\",\r\n    \"calories\": 3,\r\n    \"unit\": \"grams\",\r\n    \"type\": \"Beverage\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/{{apiAdmin}}/ingredients/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"{{apiAdmin}}",
+												"ingredients",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "1231"
+												}
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Success",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"name\": \"Coffee\",\r\n    \"calories\": 3,\r\n    \"unit\": \"grams\",\r\n    \"type\": \"Beverage\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/{{apiAdmin}}/ingredients/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"{{apiAdmin}}",
+												"ingredients",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "98"
+												}
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Fail (name of other existing ingredient)",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"name\": \"Chicken\",\r\n    \"calories\": 3,\r\n    \"unit\": \"grams\",\r\n    \"type\": \"Beverage\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/{{apiAdmin}}/ingredients/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"{{apiAdmin}}",
+												"ingredients",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "98"
+												}
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						},
+						{
+							"name": "Delete Ingredient",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Polish\",\r\n    \"description\": \"Polish cuisine etc etc etc\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/{{apiAdmin}}/ingredients/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"{{apiAdmin}}",
+										"ingredients",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "110"
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Success",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"name\": \"Polish\",\r\n    \"description\": \"Polish cuisine etc etc etc\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/{{apiAdmin}}/ingredients/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"{{apiAdmin}}",
+												"ingredients",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "50"
+												}
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Fail (ingredient doesn't exist)",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"name\": \"Polish\",\r\n    \"description\": \"Polish cuisine etc etc etc\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/{{apiAdmin}}/ingredients/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"{{apiAdmin}}",
+												"ingredients",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "50"
+												}
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Client",
+					"item": [
+						{
+							"name": "Get All Ingredients",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/{{apiClient}}/ingredients",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"{{apiClient}}",
+										"ingredients"
+									]
+								},
+								"description": "# **API Endpoint Documentation: Get All Ingredients**\n\n## **Authentication**\n\nThe user must be logged in and provide a valid JWT token in the `Authorization` header.\n\n### **Example:**\n\n```\nAuthorization: Bearer <your-jwt-token>\n\n ```\n\n## **Response**\n\nReturns a JSON array containing the details of all ingredients.\n\n### **Successful Response (200 OK)**\n\n``` json\n[\n    {\n        \"id\": 8,\n        \"name\": \"Carrot\",\n        \"type\": \"Vegetable\",\n        \"calories\": 41,\n        \"unit\": \"grams\",\n        \"createdAt\": \"2024-11-23T13:55:11\",\n        \"updatedAt\": \"2024-11-23T13:55:11\"\n    },\n    {\n        \"id\": 9,\n        \"name\": \"Potato\",\n        \"type\": \"Vegetable\",\n        \"calories\": 77,\n        \"unit\": \"grams\",\n        \"createdAt\": \"2024-11-23T13:55:11\",\n        \"updatedAt\": \"2024-11-23T13:55:11\"\n    }\n]\n\n ```\n\n## **Error Responses**\n\n### **401 Unauthorized**\n\n``` json\n{\n    \"status\": 401,\n    \"message\": \"Unauthorized: JWT token is missing or invalid\"\n}\n\n ```\n\n## **Example Request**\n\n```\nGET http://localhost:8080/api/client/ingredients\nHeaders:\nAuthorization: Bearer <your-jwt-token>\n\n ```"
+							},
+							"response": []
+						},
+						{
+							"name": "Get Ingredient by Id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/{{apiClient}}/ingredients/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"{{apiClient}}",
+										"ingredients",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								},
+								"description": "# **API Endpoint Documentation: Get Ingredient by ID**\n\n## **Endpoint**\n\n`GET {{baseUrl}}/{{apiClient}}/ingredients/:id`\n\n## **Authentication**\n\nThe user must be logged in and provide a valid JWT token in the `Authorization` header.\n\n### **Example:**\n\n```\nAuthorization: Bearer <your-jwt-token>\n\n ```\n\n## **Path Parameters**\n\n- `id` (integer, required): The unique identifier of the ingredient (e.g., 8 for Carrot, 9 for Potato).\n    \n\n## **Response**\n\nReturns a JSON object containing the details of the specified ingredient.\n\n### **Successful Response (200 OK)**\n\n``` json\n{\n    \"id\": 8,\n    \"name\": \"Carrot\",\n    \"type\": \"Vegetable\",\n    \"calories\": 41,\n    \"unit\": \"grams\",\n    \"createdAt\": \"2024-11-23T13:55:11\",\n    \"updatedAt\": \"2024-11-23T13:55:11\"\n}\n\n ```\n\n## **Error Responses**\n\n### **401 Unauthorized**\n\n``` json\n{\n    \"status\": 401,\n    \"message\": \"Unauthorized: JWT token is missing or invalid\"\n}\n\n ```\n\n### **404 Not Found**\n\nIf the ingredient with the specified ID does not exist.\n\n``` json\n{\n    \"status\": 404,\n    \"message\": \"Ingredient not found\"\n}\n\n ```\n\n## **Example Request**\n\n```\nGET http://localhost:8080/api/client/ingredients/8\nHeaders:\nAuthorization: Bearer <your-jwt-token>\n\n ```"
+							},
+							"response": [
+								{
+									"name": "Success",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/{{apiClient}}/ingredients/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"{{apiClient}}",
+												"ingredients",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "44"
+												}
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Fail (doesn't exist)",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/{{apiClient}}/ingredients/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"{{apiClient}}",
+												"ingredients",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "1"
+												}
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						},
+						{
+							"name": "Get Ingredient by Name",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/{{apiClient}}/ingredients/search/name?name=Carrot",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"{{apiClient}}",
+										"ingredients",
+										"search",
+										"name"
+									],
+									"query": [
+										{
+											"key": "name",
+											"value": "Carrot"
+										}
+									]
+								},
+								"description": "# **API Endpoint Documentation: Search Ingredient by Name**\n\n## **Authentication**\n\nThe user must be logged in and provide a valid JWT token in the `Authorization` header.\n\n### **Example:**\n\n```\nAuthorization: Bearer <your-jwt-token>\n\n ```\n\n## **Query Parameters**\n\n- `name` (string, required): The name of the ingredient you are searching for (e.g., \"Carrot\", \"Potato\").\n    \n\n## **Response**\n\nReturns a JSON array containing the details of the ingredients that match the specified name. If no ingredients match, an empty array `[]` will be returned.\n\n### **Successful Response (200 OK)**\n\nIf an ingredient with the specified name is found:\n\n``` json\n[\n    {\n        \"id\": 8,\n        \"name\": \"Carrot\",\n        \"type\": \"Vegetable\",\n        \"calories\": 41,\n        \"unit\": \"grams\",\n        \"createdAt\": \"2024-11-23T13:55:11\",\n        \"updatedAt\": \"2024-11-23T13:55:11\"\n    }\n]\n\n ```\n\nIf no ingredients are found:\n\n``` json\n[]\n\n ```\n\n### **Error Responses**\n\n#### **401 Unauthorized**\n\nIf the user is not authenticated or provides an invalid JWT token:\n\n``` json\n{\n    \"status\": 401,\n    \"message\": \"Unauthorized: JWT token is missing or invalid\"\n}\n\n ```\n\n## **Example Request**\n\n```\nGET http://localhost:8080/api/client/ingredients/search/name?name=Carrot\nHeaders:\nAuthorization: Bearer <your-jwt-token>\n\n ```"
+							},
+							"response": [
+								{
+									"name": "Success",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/{{apiClient}}/ingredients/search/name?name=Carrot",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"{{apiClient}}",
+												"ingredients",
+												"search",
+												"name"
+											],
+											"query": [
+												{
+													"key": "name",
+													"value": "Carrot"
+												}
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						},
+						{
+							"name": "Get Ingredient by Type",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/{{apiClient}}/ingredients/search/type",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"{{apiClient}}",
+										"ingredients",
+										"search",
+										"type"
+									],
+									"query": [
+										{
+											"key": "type",
+											"value": "protein",
+											"disabled": true
+										}
+									]
+								},
+								"description": "# **API Endpoint Documentation: Search Ingredients by Type**\n\n## **Endpoint**\n\n`GET {{baseUrl}}/{{apiClient}}/ingredients/search/type?type={type}`\n\n## **Authentication**\n\nThe user must be logged in and provide a valid JWT token in the `Authorization` header.\n\n### **Example:**\n\n```\nAuthorization: Bearer <your-jwt-token>\n\n ```\n\n## **Query Parameters**\n\n- `type` (string, required): The type of ingredient to search for (e.g., `\"protein\"`, `\"vegetable\"`, `\"dairy\"`).\n    \n\n## **Response**\n\nReturns a JSON array containing ingredients that match the specified type. If no ingredients match, an empty array `[]` is returned.\n\n### **Successful Response (200 OK)**\n\nIf ingredients of the specified type are found:\n\n``` json\n[\n    {\n        \"id\": 12,\n        \"name\": \"Chicken Breast\",\n        \"type\": \"Protein\",\n        \"calories\": 165,\n        \"unit\": \"grams\",\n        \"createdAt\": \"2024-11-23T13:55:11\",\n        \"updatedAt\": \"2024-11-23T13:55:11\"\n    },\n    {\n        \"id\": 15,\n        \"name\": \"Tofu\",\n        \"type\": \"Protein\",\n        \"calories\": 144,\n        \"unit\": \"grams\",\n        \"createdAt\": \"2024-11-23T13:55:11\",\n        \"updatedAt\": \"2024-11-23T13:55:11\"\n    }\n]\n\n ```\n\nIf no ingredients are found:\n\n``` json\n[]\n\n ```\n\n### **Error Responses**\n\n#### **401 Unauthorized**\n\nIf the user is not authenticated or provides an invalid JWT token:\n\n``` json\n{\n    \"status\": 401,\n    \"message\": \"Unauthorized: JWT token is missing or invalid\"\n}\n\n ```\n\n## **Example Request**\n\n```\nGET http://localhost:8080/api/client/ingredients/search/type?type=protein\nHeaders:\nAuthorization: Bearer <your-jwt-token>\n\n ```"
+							},
+							"response": [
+								{
+									"name": "Success",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/{{apiClient}}/ingredients/search/type?type=protein",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"{{apiClient}}",
+												"ingredients",
+												"search",
+												"type"
+											],
+											"query": [
+												{
+													"key": "type",
+													"value": "protein"
+												}
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						},
+						{
+							"name": "Get Ingredient by Calories",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/{{apiClient}}/ingredients/search/calories",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"{{apiClient}}",
+										"ingredients",
+										"search",
+										"calories"
+									],
+									"query": [
+										{
+											"key": "minCalories",
+											"value": "20",
+											"disabled": true
+										},
+										{
+											"key": "maxCalories",
+											"value": "33",
+											"disabled": true
+										}
+									]
+								},
+								"description": "# **API Endpoint Documentation: Search Ingredients by Calorie Range**\n\n## **Endpoint**\n\n`GET {{baseUrl}}/{{apiClient}}/ingredients/search/calories?minCalories={min}&maxCalories={max}`\n\n## **Authentication**\n\nThe user must be logged in and provide a valid JWT token in the `Authorization` header.\n\n### **Example:**\n\n```\nAuthorization: Bearer <your-jwt-token>\n\n ```\n\n## **Query Parameters**\n\n- `minCalories` (integer, required): The minimum calorie value to filter ingredients.\n    \n- `maxCalories` (integer, required): The maximum calorie value to filter ingredients.\n    \n\n## **Response**\n\nReturns a JSON array containing ingredients whose calorie values fall within the specified range. If no ingredients match, an empty array `[]` is returned.\n\n### **Successful Response (200 OK)**\n\nIf ingredients are found within the calorie range:\n\n``` json\n[\n    {\n        \"id\": 21,\n        \"name\": \"Avocado\",\n        \"type\": \"Fruit\",\n        \"calories\": 160,\n        \"unit\": \"grams\",\n        \"createdAt\": \"2024-11-23T13:55:11\",\n        \"updatedAt\": \"2024-11-23T13:55:11\"\n    },\n    {\n        \"id\": 24,\n        \"name\": \"Almonds\",\n        \"type\": \"Nut\",\n        \"calories\": 579,\n        \"unit\": \"grams\",\n        \"createdAt\": \"2024-11-23T13:55:11\",\n        \"updatedAt\": \"2024-11-23T13:55:11\"\n    }\n]\n\n ```\n\nIf no ingredients are found:\n\n``` json\n[]\n\n ```\n\n### **Error Responses**\n\n#### **401 Unauthorized**\n\nIf the user is not authenticated or provides an invalid JWT token:\n\n``` json\n{\n    \"status\": 401,\n    \"message\": \"Unauthorized: JWT token is missing or invalid\"\n}\n\n ```\n\n#### **409 Conflict**\n\nIf `maxCalories` is less than `minCalories`:\n\n``` json\n{\n    \"status\": 409,\n    \"message\": \"Your minCalories amount is higher than maxCalories amount\",\n    \"timestamp\": \"2025-03-03T17:36:21.618867\"\n}\n\n ```\n\n## **Example Request**\n\n```\nGET http://localhost:8080/api/client/ingredients/search/calories?minCalories=100&maxCalories=500\nHeaders:\nAuthorization: Bearer <your-jwt-token>\n\n ```"
+							},
+							"response": [
+								{
+									"name": "Success",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/{{apiClient}}/ingredients/search/calories?minCalories=100&maxCalories=33",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"{{apiClient}}",
+												"ingredients",
+												"search",
+												"calories"
+											],
+											"query": [
+												{
+													"key": "minCalories",
+													"value": "100"
+												},
+												{
+													"key": "maxCalories",
+													"value": "33"
+												}
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Fail (max calories are < than min )",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/{{apiClient}}/ingredients/search/calories?minCalories=20&maxCalories=33",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"{{apiClient}}",
+												"ingredients",
+												"search",
+												"calories"
+											],
+											"query": [
+												{
+													"key": "minCalories",
+													"value": "20"
+												},
+												{
+													"key": "maxCalories",
+													"value": "33"
+												}
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						}
+					]
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{jwtToken}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "jwtToken",
+			"value": ""
+		},
+		{
+			"key": "apiAdmin",
+			"value": "api/admin",
+			"type": "string"
+		},
+		{
+			"key": "apiClient",
+			"value": "api/client",
+			"type": "string"
+		},
+		{
+			"key": "resetPasswordToken",
+			"value": ""
+		}
+	]
+}
