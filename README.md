@@ -137,6 +137,30 @@ The project follows a clean and organized architecture to ensure maintainability
  ┃ ┃ ┃ ┣ 📜 data.sql            - Initial data seeding
  ┃ ┃ ┃ ┣ 📜 Cookio.postman_collection.json - Postman collection to test each endpoint
 
+```
+# API Documentation
+
+For detailed information about the API endpoints and request formats, please refer to the Postman collection included in the repository.
+
+## 🔗 Import Postman Collection
+
+To import the Postman collection, follow these steps:
+
+1. Download the collection: [Cookio Postman Collection](#)  
+2. Open Postman
+3. Click on **Import**  
+4. Select the downloaded `.json` file
+
+Now you’re ready to start testing the API 🚀
+
+## 📬 Contact
+
+If you encounter any issues or have questions, feel free to reach out:
+
+- **Email**: oleksandrlutsiuk2004@example.com  
+- **Linkedin**: www.linkedin.com/in/oleksandr-lutsiuk-881377354
+
+
 
 
 
