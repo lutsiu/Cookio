@@ -345,18 +345,21 @@
 										"header": [
 											{
 												"key": "Authorization",
-												"value": "Bearer {{jwtToken}}",
+												"value": "Bearer ",
 												"type": "text",
 												"disabled": true
 											}
 										],
 										"url": {
-											"raw": "{{baseUrl}}/{{apiAdmin}}/users",
+											"raw": "http://localhost:8080/api/admin/users",
+											"protocol": "http",
 											"host": [
-												"{{baseUrl}}"
+												"localhost"
 											],
+											"port": "8080",
 											"path": [
-												"{{apiAdmin}}",
+												"api",
+												"admin",
 												"users"
 											]
 										}
@@ -516,17 +519,20 @@
 										"header": [
 											{
 												"key": "Authorization",
-												"value": "Bearer {{jwtToken}}",
+												"value": "Bearer ",
 												"type": "text"
 											}
 										],
 										"url": {
-											"raw": "{{baseUrl}}/{{apiAdmin}}/users/name?firstName=Krzysztof&lastName=Kowalski",
+											"raw": "http://localhost:8080/api/admin/users/name?firstName=Krzysztof&lastName=Kowalski",
+											"protocol": "http",
 											"host": [
-												"{{baseUrl}}"
+												"localhost"
 											],
+											"port": "8080",
 											"path": [
-												"{{apiAdmin}}",
+												"api",
+												"admin",
 												"users",
 												"name"
 											],
@@ -875,7 +881,7 @@
 										}
 									]
 								},
-								"description": "### Change User Password\n\nThis API endpoint is used to change the password for a specific user.  \n  \nIn order to use this request, you need to be logged in and have JWT-token.\n\n#### Request\n\n- Method: `PATCH`\n    \n- URL: `{{baseUrl}}/{{apiClient}}/users/:id/change-password`\n    \n\n##### Path Parameters\n\n- `id`: The unique identifier of the user.\n    \n\n##### Query Parameters\n\n- `new_password`: The new password that meets all necessary requirements.\n    \n\n#### Response\n\nThe response (if positive) is simply a string that password was successfully changed."
+								"description": "### Change User Password\n\nThis API endpoint is used to change the password for a specific user.\n\nIn order to use this request, you need to be logged in and have JWT-token.\n\n#### Request\n\n- Method: `PATCH`\n    \n- URL: `{{baseUrl}}/{{apiClient}}/users/:id/change-password`\n    \n\n##### Path Parameters\n\n- `id`: The unique identifier of the user.\n    \n\n##### Query Parameters\n\n- `new_password`: The new password that meets all necessary requirements.\n    \n\n#### Response\n\nThe response (if positive) is simply a string that password was successfully changed."
 							},
 							"response": [
 								{
@@ -1030,6 +1036,74 @@
 									"body": ""
 								}
 							]
+						},
+						{
+							"name": "Add recipe",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/{{apiClient}}/users/:userId/recipe/:recipeId/add",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"{{apiClient}}",
+										"users",
+										":userId",
+										"recipe",
+										":recipeId",
+										"add"
+									],
+									"variable": [
+										{
+											"key": "userId",
+											"value": "",
+											"description": "enter the value of logged in user"
+										},
+										{
+											"key": "recipeId",
+											"value": "",
+											"description": "enter the value of recipe you'd like to add"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Remove recipe",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/{{apiClient}}/users/:userId/recipe/:recipeId/remove",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"{{apiClient}}",
+										"users",
+										":userId",
+										"recipe",
+										":recipeId",
+										"remove"
+									],
+									"variable": [
+										{
+											"key": "userId",
+											"value": "",
+											"description": "enter the value of logged in user"
+										},
+										{
+											"key": "recipeId",
+											"value": "",
+											"description": "enter the value of recipe you'd like to remove"
+										}
+									]
+								}
+							},
+							"response": []
 						}
 					],
 					"description": "Folder dedicated for client methods"
@@ -1132,10 +1206,12 @@
 									}
 								},
 								"url": {
-									"raw": "{{baseUrl}}/password-reset/request?email=javatest2024@gmail.com",
+									"raw": "http://localhost:8080/password-reset/request?email=javatest2024@gmail.com",
+									"protocol": "http",
 									"host": [
-										"{{baseUrl}}"
+										"localhost"
 									],
+									"port": "8080",
 									"path": [
 										"password-reset",
 										"request"
@@ -1248,10 +1324,12 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{baseUrl}}/password-reset/verify-token?token=c87267ce-6bbc-4224-93e2-c7f47fd5dc1d",
+									"raw": "http://localhost:8080/password-reset/verify-token?token=c87267ce-6bbc-4224-93e2-c7f47fd5dc1d",
+									"protocol": "http",
 									"host": [
-										"{{baseUrl}}"
+										"localhost"
 									],
+									"port": "8080",
 									"path": [
 										"password-reset",
 										"verify-token"
@@ -1325,10 +1403,12 @@
 									}
 								},
 								"url": {
-									"raw": "{{baseUrl}}/password-reset/reset?token={{resetPasswordToken}}&newPassword=Bobr123!",
+									"raw": "http://localhost:8080/password-reset/reset?token=&newPassword=Bobr123!",
+									"protocol": "http",
 									"host": [
-										"{{baseUrl}}"
+										"localhost"
 									],
+									"port": "8080",
 									"path": [
 										"password-reset",
 										"reset"
@@ -1336,7 +1416,7 @@
 									"query": [
 										{
 											"key": "token",
-											"value": "{{resetPasswordToken}}"
+											"value": ""
 										},
 										{
 											"key": "newPassword",
@@ -1418,12 +1498,15 @@
 											]
 										},
 										"url": {
-											"raw": "{{baseUrl}}/{{apiAdmin}}/recipes/create",
+											"raw": "http://localhost:8080/api/admin/recipes/create",
+											"protocol": "http",
 											"host": [
-												"{{baseUrl}}"
+												"localhost"
 											],
+											"port": "8080",
 											"path": [
-												"{{apiAdmin}}",
+												"api",
+												"admin",
 												"recipes",
 												"create"
 											]
@@ -1467,12 +1550,15 @@
 										"method": "DELETE",
 										"header": [],
 										"url": {
-											"raw": "{{baseUrl}}/{{apiAdmin}}/recipes/:id",
+											"raw": "http://localhost:8080/api/admin/recipes/:id",
+											"protocol": "http",
 											"host": [
-												"{{baseUrl}}"
+												"localhost"
 											],
+											"port": "8080",
 											"path": [
-												"{{apiAdmin}}",
+												"api",
+												"admin",
 												"recipes",
 												":id"
 											],
@@ -1582,12 +1668,15 @@
 											]
 										},
 										"url": {
-											"raw": "{{baseUrl}}/{{apiAdmin}}/recipes/:id",
+											"raw": "http://localhost:8080/api/admin/recipes/:id",
+											"protocol": "http",
 											"host": [
-												"{{baseUrl}}"
+												"localhost"
 											],
+											"port": "8080",
 											"path": [
-												"{{apiAdmin}}",
+												"api",
+												"admin",
 												"recipes",
 												":id"
 											],
